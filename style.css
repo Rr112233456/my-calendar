@@ -581,6 +581,7 @@ body {
     font-size: 13px;
     outline: none;
     background: white;
+    color: #111827;
     transition: 0.2s;
 }
 
@@ -903,6 +904,49 @@ body.dark-mode .close-modal:hover {
 body.dark-mode .complete-task-button.completed {
     background: #374151;
     color: #d1d5db;
+}
+
+/* =========================
+   TASK BAR TEXT READABILITY
+========================= */
+
+/* ทำให้ข้อความบนแถบงานอ่านง่าย */
+.event {
+    color: #1f2937 !important;
+    font-weight: 600;
+}
+
+.event.blue,
+.event.purple,
+.event.green {
+    color: #1f2937 !important;
+}
+
+/* ถ้ามี Multi-day Event */
+.multi-day-event,
+.multi-day-event-label,
+.multi-day-event-end {
+    color: #1f2937 !important;
+    font-weight: 600;
+}
+
+.event *,
+.multi-day-event *,
+.multi-day-event-label *,
+.multi-day-event-end * {
+    color: #1f2937 !important;
+}
+
+/* Dark Mode */
+body.dark-mode .event,
+body.dark-mode .event *,
+body.dark-mode .multi-day-event,
+body.dark-mode .multi-day-event *,
+body.dark-mode .multi-day-event-label,
+body.dark-mode .multi-day-event-label *,
+body.dark-mode .multi-day-event-end,
+body.dark-mode .multi-day-event-end * {
+    color: #f9fafb !important;
 }
 
 /* =========================
