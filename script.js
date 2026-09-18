@@ -1,9 +1,22 @@
+// =====================================================
+// MY CALENDAR - SCRIPT.JS
+// =====================================================
+
+"use strict";
+
+// =====================================================
+// ELEMENTS
+// =====================================================
+
 const calendarGrid = document.getElementById("calendarGrid");
 const monthTitle = document.getElementById("monthTitle");
+
 const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 const todayButton = document.getElementById("todayButton");
+
 const newTaskButton = document.getElementById("newTaskButton");
+
 const searchButton = document.getElementById("searchButton");
 const searchBox = document.getElementById("searchBox");
 const searchInput = document.getElementById("searchInput");
@@ -12,42 +25,131 @@ const taskModal = document.getElementById("taskModal");
 const closeModal = document.getElementById("closeModal");
 const saveTaskButton = document.getElementById("saveTaskButton");
 
-const taskDetailModal = document.getElementById("taskDetailModal");
-const closeDetailModal = document.getElementById("closeDetailModal");
-const editTaskButton = document.getElementById("editTaskButton");
-const deleteTaskButton = document.getElementById("deleteTaskButton");
-const completeTaskButton = document.getElementById("completeTaskButton");
+const taskDetailModal =
+    document.getElementById("taskDetailModal");
 
-const detailTaskName = document.getElementById("detailTaskName");
-const detailTaskCategory = document.getElementById("detailTaskCategory");
-const detailTaskDate = document.getElementById("detailTaskDate");
-const detailTaskStart = document.getElementById("detailTaskStart");
-const detailTaskEnd = document.getElementById("detailTaskEnd");
-const detailTaskLocation = document.getElementById("detailTaskLocation");
-const detailTaskDetails = document.getElementById("detailTaskDetails");
+const closeTaskDetailModal =
+    document.getElementById("closeTaskDetailModal");
 
-const upcomingTasks = document.getElementById("upcomingTasks");
-const taskCount = document.getElementById("taskCount");
-const totalTasks = document.getElementById("totalTasks");
-const completedTasks = document.getElementById("completedTasks");
-const upcomingTaskCount = document.getElementById("upcomingTaskCount");
+const editTaskButton =
+    document.getElementById("editTaskButton");
 
-let selectedTaskId = null;
-let editingTaskId = null;
+const deleteTaskButton =
+    document.getElementById("deleteTaskButton");
+
+const completeTaskButton =
+    document.getElementById("completeTaskButton");
+
+const detailTaskName =
+    document.getElementById("detailTaskName");
+
+const detailTaskCategory =
+    document.getElementById("detailTaskCategory");
+
+const detailTaskDate =
+    document.getElementById("detailTaskDate");
+
+const detailTaskStart =
+    document.getElementById("detailTaskStart");
+
+const detailTaskEnd =
+    document.getElementById("detailTaskEnd");
+
+const detailTaskLocation =
+    document.getElementById("detailTaskLocation");
+
+const detailTaskDetails =
+    document.getElementById("detailTaskDetails");
+
+const upcomingTasks =
+    document.getElementById("upcomingTasks");
+
+const taskCount =
+    document.getElementById("taskCount");
+
+const totalTasks =
+    document.getElementById("totalTasks");
+
+const completedTasks =
+    document.getElementById("completedTasks");
+
+const upcomingTaskCount =
+    document.getElementById("upcomingTaskCount");
+
+const themeButton =
+    document.getElementById("themeButton");
+
+// =====================================================
+// FORM ELEMENTS
+// =====================================================
+
+const taskNameInput =
+    document.getElementById("taskName");
+
+const taskDateInput =
+    document.getElementById("taskDate");
+
+const taskEndDateInput =
+    document.getElementById("taskEndDate");
+
+const taskCategoryInput =
+    document.getElementById("taskCategory");
+
+const taskStartInput =
+    document.getElementById("taskStart");
+
+const taskEndInput =
+    document.getElementById("taskEnd");
+
+const taskLocationInput =
+    document.getElementById("taskLocation");
+
+const taskDetailsInput =
+    document.getElementById("taskDetails");
+
+const taskColorInput =
+    document.getElementById("taskColor");
+
+const taskTextColorInput =
+    document.getElementById("taskTextColor");
+
+// =====================================================
+// SETTINGS
+// =====================================================
 
 const DEFAULT_TASK_COLOR = "#eaf2ff";
 const DEFAULT_TEXT_COLOR = "#1f2937";
 
-let taskColorInput = null;
-let taskTextColorInput = null;
+const STORAGE_KEY = "myTasks";
+const THEME_KEY = "calendarTheme";
+
+// =====================================================
+// DATE
+// =====================================================
 
 const today = new Date();
 
-let currentMonth = today.getMonth();
-let currentYear = today.getFullYear();
-
 const todayString =
-    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    formatDateToString(today);
+
+let currentMonth =
+    today.getMonth();
+
+let currentYear =
+    today.getFullYear();
+
+// =====================================================
+// STATE
+// =====================================================
+
+let selectedTaskId = null;
+let editingTaskId = null;
+
+let tasks = loadTasks();
+
+// =====================================================
+// MONTH NAMES
+// =====================================================
 
 const monthNames = [
     "January",
@@ -64,154 +166,209 @@ const monthNames = [
     "December"
 ];
 
-let tasks =
-    JSON.parse(
-        localStorage.getItem("myTasks")
-    ) || [];
+// =====================================================
+// LOAD TASKS
+// =====================================================
 
-function setupTaskColorPickers() {
+function loadTasks() {
 
-    if (!saveTaskButton) {
-        return;
+    try {
+
+        const saved =
+            localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+            return [];
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        if (!Array.isArray(parsed)) {
+            return [];
+        }
+
+        return parsed;
+
+    } catch (error) {
+
+        console.error(
+            "ไม่สามารถโหลด Tasks ได้:",
+            error
+        );
+
+        return [];
     }
+}
 
-    taskColorInput =
-        document.getElementById("taskColor");
+// =====================================================
+// SAVE TASKS
+// =====================================================
 
-    taskTextColorInput =
-        document.getElementById("taskTextColor");
+function saveTasks() {
 
-    if (
-        taskColorInput &&
-        taskTextColorInput
-    ) {
-        return;
-    }
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.id =
-        "taskColorPickerWrapper";
-
-    wrapper.style.display =
-        "grid";
-
-    wrapper.style.gridTemplateColumns =
-        "1fr 1fr";
-
-    wrapper.style.gap =
-        "12px";
-
-    wrapper.style.marginTop =
-        "12px";
-
-    wrapper.style.marginBottom =
-        "12px";
-
-    const barGroup =
-        document.createElement("div");
-
-    const textGroup =
-        document.createElement("div");
-
-    const barLabel =
-        document.createElement("label");
-
-    const textLabel =
-        document.createElement("label");
-
-    barLabel.textContent =
-        "สีแถบงาน";
-
-    textLabel.textContent =
-        "สีตัวหนังสือ";
-
-    barLabel.style.display =
-        "block";
-
-    textLabel.style.display =
-        "block";
-
-    barLabel.style.marginBottom =
-        "6px";
-
-    textLabel.style.marginBottom =
-        "6px";
-
-    taskColorInput =
-        document.createElement("input");
-
-    taskTextColorInput =
-        document.createElement("input");
-
-    taskColorInput.type =
-        "color";
-
-    taskTextColorInput.type =
-        "color";
-
-    taskColorInput.id =
-        "taskColor";
-
-    taskTextColorInput.id =
-        "taskTextColor";
-
-    taskColorInput.value =
-        DEFAULT_TASK_COLOR;
-
-    taskTextColorInput.value =
-        DEFAULT_TEXT_COLOR;
-
-    taskColorInput.style.width =
-        "100%";
-
-    taskTextColorInput.style.width =
-        "100%";
-
-    taskColorInput.style.height =
-        "40px";
-
-    taskTextColorInput.style.height =
-        "40px";
-
-    taskColorInput.style.cursor =
-        "pointer";
-
-    taskTextColorInput.style.cursor =
-        "pointer";
-
-    barGroup.appendChild(
-        barLabel
-    );
-
-    barGroup.appendChild(
-        taskColorInput
-    );
-
-    textGroup.appendChild(
-        textLabel
-    );
-
-    textGroup.appendChild(
-        taskTextColorInput
-    );
-
-    wrapper.appendChild(
-        barGroup
-    );
-
-    wrapper.appendChild(
-        textGroup
-    );
-
-    saveTaskButton.parentNode.insertBefore(
-        wrapper,
-        saveTaskButton
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(tasks)
     );
 }
 
-function resetTaskColors() {
+// =====================================================
+// FORMAT DATE -> YYYY-MM-DD
+// =====================================================
+
+function formatDateToString(date) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0")
+    );
+}
+
+// =====================================================
+// PARSE LOCAL DATE
+// =====================================================
+
+function parseDate(dateString) {
+
+    if (!dateString) {
+        return null;
+    }
+
+    return new Date(
+        dateString + "T00:00:00"
+    );
+}
+
+// =====================================================
+// FORMAT TASK DATE
+// =====================================================
+
+function formatTaskDate(dateString) {
+
+    const date =
+        parseDate(dateString);
+
+    if (!date) {
+        return "-";
+    }
+
+    return date.toLocaleDateString(
+        "en-GB",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }
+    );
+}
+
+// =====================================================
+// FORMAT UPCOMING DATE
+// =====================================================
+
+function formatUpcomingDate(dateString) {
+
+    if (dateString === todayString) {
+        return "Today";
+    }
+
+    const date =
+        parseDate(dateString);
+
+    if (!date) {
+        return "-";
+    }
+
+    return date.toLocaleDateString(
+        "en-GB",
+        {
+            day: "numeric",
+            month: "short"
+        }
+    );
+}
+
+// =====================================================
+// CATEGORY CLASS
+// =====================================================
+
+function getCategoryClass(category) {
+
+    switch (category) {
+
+        case "video":
+            return "blue";
+
+        case "design":
+            return "green";
+
+        case "website":
+            return "purple";
+
+        default:
+            return "blue";
+    }
+}
+
+// =====================================================
+// CATEGORY ICON
+// =====================================================
+
+function getCategoryIcon(category) {
+
+    switch (category) {
+
+        case "video":
+            return "🎥";
+
+        case "design":
+            return "🎨";
+
+        case "website":
+            return "💻";
+
+        default:
+            return "📋";
+    }
+}
+
+// =====================================================
+// RESET FORM
+// =====================================================
+
+function resetTaskForm() {
+
+    if (taskNameInput) {
+        taskNameInput.value = "";
+    }
+
+    if (taskDateInput) {
+        taskDateInput.value = "";
+    }
+
+    if (taskEndDateInput) {
+        taskEndDateInput.value = "";
+    }
+
+    if (taskStartInput) {
+        taskStartInput.value = "";
+    }
+
+    if (taskEndInput) {
+        taskEndInput.value = "";
+    }
+
+    if (taskLocationInput) {
+        taskLocationInput.value = "";
+    }
+
+    if (taskDetailsInput) {
+        taskDetailsInput.value = "";
+    }
 
     if (taskColorInput) {
         taskColorInput.value =
@@ -224,72 +381,641 @@ function resetTaskColors() {
     }
 }
 
-const crossDayStyle =
-    document.createElement("style");
+// =====================================================
+// LOAD TASK INTO FORM
+// =====================================================
 
-crossDayStyle.textContent = `
+function loadTaskIntoForm(task) {
 
-#calendarGrid {
-    position: relative;
-    column-gap: 0 !important;
-    row-gap: 0 !important;
+    if (!task) {
+        return;
+    }
+
+    taskNameInput.value =
+        task.name || "";
+
+    taskDateInput.value =
+        task.date || "";
+
+    taskEndDateInput.value =
+        task.endDate || task.date || "";
+
+    taskCategoryInput.value =
+        task.category || "work";
+
+    taskStartInput.value =
+        task.start || "";
+
+    taskEndInput.value =
+        task.end || "";
+
+    taskLocationInput.value =
+        task.location || "";
+
+    taskDetailsInput.value =
+        task.details || "";
+
+    taskColorInput.value =
+        task.color || DEFAULT_TASK_COLOR;
+
+    taskTextColorInput.value =
+        task.textColor ||
+        DEFAULT_TEXT_COLOR;
 }
 
-#calendarGrid .day {
-    position: relative;
-    z-index: 1;
-    overflow: visible;
-    box-sizing: border-box;
+// =====================================================
+// OPEN NEW TASK MODAL
+// =====================================================
+
+function openNewTaskModal() {
+
+    editingTaskId = null;
+
+    resetTaskForm();
+
+    taskModal.style.display = "flex";
 }
 
-#calendarGrid .multi-day-event {
-    position: relative;
-    align-self: start;
-    min-width: 0;
-    height: 24px;
-    box-sizing: border-box;
-    padding: 3px 8px;
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 7px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-    cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow:
-        0 1px 3px rgba(0,0,0,.12);
+// =====================================================
+// CLOSE NEW TASK MODAL
+// =====================================================
+
+function closeNewTaskModal() {
+
+    taskModal.style.display = "none";
+
+    editingTaskId = null;
 }
 
-#calendarGrid .multi-day-event-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
+// =====================================================
+// OPEN TASK DETAIL
+// =====================================================
+
+function openTaskDetail(task) {
+
+    if (!task) {
+        return;
+    }
+
+    selectedTaskId = task.id;
+
+    detailTaskName.textContent =
+        task.name || "Untitled Task";
+
+    detailTaskCategory.textContent =
+        task.category || "ไม่ได้ระบุ";
+
+    if (
+        task.endDate &&
+        task.endDate !== task.date
+    ) {
+
+        detailTaskDate.textContent =
+            `${formatTaskDate(task.date)} - ${formatTaskDate(task.endDate)}`;
+
+    } else {
+
+        detailTaskDate.textContent =
+            formatTaskDate(task.date);
+    }
+
+    detailTaskStart.textContent =
+        task.start || "ไม่ได้ระบุ";
+
+    detailTaskEnd.textContent =
+        task.end || "ไม่ได้ระบุ";
+
+    detailTaskLocation.textContent =
+        task.location || "ไม่ได้ระบุ";
+
+    detailTaskDetails.textContent =
+        task.details ||
+        "ไม่มีรายละเอียดเพิ่มเติม";
+
+    updateCompleteButton(task);
+
+    taskDetailModal.style.display =
+        "flex";
 }
 
-#calendarGrid .multi-day-event-end {
-    flex-shrink: 0;
-    font-size: 11px;
-    font-weight: 700;
+// =====================================================
+// CLOSE DETAIL MODAL
+// =====================================================
+
+function closeTaskDetail() {
+
+    taskDetailModal.style.display =
+        "none";
+
+    selectedTaskId = null;
 }
 
-#calendarGrid .multi-day-event.completed {
-    text-decoration: line-through;
-    opacity: .6;
+// =====================================================
+// CREATE TASK
+// =====================================================
+
+function createTask() {
+
+    const taskName =
+        taskNameInput.value.trim();
+
+    const taskDate =
+        taskDateInput.value;
+
+    const taskEndDate =
+        taskEndDateInput.value;
+
+    const taskCategory =
+        taskCategoryInput.value;
+
+    const taskStart =
+        taskStartInput.value;
+
+    const taskEnd =
+        taskEndInput.value;
+
+    const taskLocation =
+        taskLocationInput.value.trim();
+
+    const taskDetails =
+        taskDetailsInput.value.trim();
+
+    const taskColor =
+        taskColorInput.value ||
+        DEFAULT_TASK_COLOR;
+
+    const taskTextColor =
+        taskTextColorInput.value ||
+        DEFAULT_TEXT_COLOR;
+
+    // -------------------------------------------------
+    // VALIDATION
+    // -------------------------------------------------
+
+    if (!taskName || !taskDate) {
+
+        alert(
+            "กรุณากรอกชื่องานและ Start Date"
+        );
+
+        return;
+    }
+
+    const finalEndDate =
+        taskEndDate || taskDate;
+
+    if (finalEndDate < taskDate) {
+
+        alert(
+            "End Date ต้องไม่ก่อน Start Date"
+        );
+
+        return;
+    }
+
+    // -------------------------------------------------
+    // EDIT
+    // -------------------------------------------------
+
+    if (editingTaskId !== null) {
+
+        const task =
+            tasks.find(function(item) {
+
+                return (
+                    item.id ===
+                    editingTaskId
+                );
+
+            });
+
+        if (!task) {
+            return;
+        }
+
+        task.name =
+            taskName;
+
+        task.date =
+            taskDate;
+
+        task.endDate =
+            finalEndDate;
+
+        task.category =
+            taskCategory;
+
+        task.start =
+            taskStart;
+
+        task.end =
+            taskEnd;
+
+        task.location =
+            taskLocation;
+
+        task.details =
+            taskDetails;
+
+        task.color =
+            taskColor;
+
+        task.textColor =
+            taskTextColor;
+
+        // ถ้าแก้วัน/เวลาใหม่
+        // ให้สามารถแจ้งเตือนอีกครั้งได้
+        task.notified = false;
+
+        saveTasks();
+
+        renderCalendar();
+
+        closeNewTaskModal();
+
+        resetTaskForm();
+
+        alert(
+            "แก้ไขงานเรียบร้อยแล้ว ✅"
+        );
+
+        editingTaskId = null;
+
+        return;
+    }
+
+    // -------------------------------------------------
+    // NEW TASK
+    // -------------------------------------------------
+
+    const newTask = {
+
+        id:
+            Date.now() +
+            Math.random(),
+
+        name:
+            taskName,
+
+        date:
+            taskDate,
+
+        endDate:
+            finalEndDate,
+
+        category:
+            taskCategory,
+
+        start:
+            taskStart,
+
+        end:
+            taskEnd,
+
+        location:
+            taskLocation,
+
+        details:
+            taskDetails,
+
+        color:
+            taskColor,
+
+        textColor:
+            taskTextColor,
+
+        completed:
+            false,
+
+        notified:
+            false
+    };
+
+    tasks.push(newTask);
+
+    saveTasks();
+
+    renderCalendar();
+
+    closeNewTaskModal();
+
+    resetTaskForm();
+
+    alert(
+        "เพิ่มงานเรียบร้อยแล้ว ✅"
+    );
 }
 
-`;
+// =====================================================
+// EDIT SELECTED TASK
+// =====================================================
 
-document.head.appendChild(
-    crossDayStyle
-);
+function editSelectedTask() {
+
+    const task =
+        tasks.find(function(item) {
+
+            return (
+                item.id ===
+                selectedTaskId
+            );
+
+        });
+
+    if (!task) {
+        return;
+    }
+
+    editingTaskId =
+        task.id;
+
+    loadTaskIntoForm(task);
+
+    taskDetailModal.style.display =
+        "none";
+
+    taskModal.style.display =
+        "flex";
+}
+
+// =====================================================
+// DELETE SELECTED TASK
+// =====================================================
+
+function deleteSelectedTask() {
+
+    const task =
+        tasks.find(function(item) {
+
+            return (
+                item.id ===
+                selectedTaskId
+            );
+
+        });
+
+    if (!task) {
+        return;
+    }
+
+    const confirmDelete =
+        confirm(
+            "ต้องการลบงานนี้ใช่ไหม?"
+        );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    tasks =
+        tasks.filter(function(item) {
+
+            return (
+                item.id !==
+                selectedTaskId
+            );
+
+        });
+
+    saveTasks();
+
+    closeTaskDetail();
+
+    renderCalendar();
+}
+
+// =====================================================
+// COMPLETE / INCOMPLETE
+// =====================================================
+
+function toggleCompleteTask() {
+
+    const task =
+        tasks.find(function(item) {
+
+            return (
+                item.id ===
+                selectedTaskId
+            );
+
+        });
+
+    if (!task) {
+        return;
+    }
+
+    task.completed =
+        !task.completed;
+
+    saveTasks();
+
+    updateCompleteButton(task);
+
+    renderCalendar();
+
+    if (task.completed) {
+
+        alert(
+            "ทำงานเสร็จแล้ว ✅"
+        );
+
+    } else {
+
+        alert(
+            "ยกเลิกสถานะเสร็จแล้ว"
+        );
+    }
+}
+
+// =====================================================
+// COMPLETE BUTTON
+// =====================================================
+
+function updateCompleteButton(task) {
+
+    if (!completeTaskButton) {
+        return;
+    }
+
+    if (task.completed) {
+
+        completeTaskButton.textContent =
+            "↩️ Mark Incomplete";
+
+        completeTaskButton.classList.add(
+            "completed"
+        );
+
+    } else {
+
+        completeTaskButton.textContent =
+            "✓ Complete";
+
+        completeTaskButton.classList.remove(
+            "completed"
+        );
+    }
+}
+
+// =====================================================
+// CREATE MULTI-DAY SEGMENTS
+// =====================================================
+
+function createTaskSegments(
+    task,
+    monthStart,
+    monthEnd,
+    firstDay,
+    startDay
+) {
+
+    if (!task.date) {
+        return [];
+    }
+
+    const startDate =
+        parseDate(task.date);
+
+    const endDate =
+        parseDate(
+            task.endDate ||
+            task.date
+        );
+
+    if (!startDate || !endDate) {
+        return [];
+    }
+
+    if (endDate < startDate) {
+        return [];
+    }
+
+    if (
+        endDate < monthStart ||
+        startDate > monthEnd
+    ) {
+        return [];
+    }
+
+    const visibleStart =
+        startDate > monthStart
+            ? startDate
+            : monthStart;
+
+    const visibleEnd =
+        endDate < monthEnd
+            ? endDate
+            : monthEnd;
+
+    const segments = [];
+
+    let segmentStart =
+        new Date(visibleStart);
+
+    while (
+        segmentStart <=
+        visibleEnd
+    ) {
+
+        const dayOffset =
+            Math.floor(
+                (
+                    segmentStart -
+                    firstDay
+                ) /
+                86400000
+            );
+
+        const cellIndex =
+            startDay +
+            dayOffset;
+
+        const row =
+            Math.floor(
+                cellIndex / 7
+            ) + 1;
+
+        const startColumn =
+            (cellIndex % 7) + 1;
+
+        const daysUntilSaturday =
+            6 -
+            segmentStart.getDay();
+
+        let segmentEnd =
+            new Date(segmentStart);
+
+        segmentEnd.setDate(
+            segmentEnd.getDate() +
+            daysUntilSaturday
+        );
+
+        if (
+            segmentEnd >
+            visibleEnd
+        ) {
+
+            segmentEnd =
+                new Date(visibleEnd);
+        }
+
+        const endDayOffset =
+            Math.floor(
+                (
+                    segmentEnd -
+                    firstDay
+                ) /
+                86400000
+            );
+
+        const endCellIndex =
+            startDay +
+            endDayOffset;
+
+        const endColumn =
+            (endCellIndex % 7) + 1;
+
+        segments.push({
+
+            task:
+                task,
+
+            row:
+                row,
+
+            startColumn:
+                startColumn,
+
+            endColumn:
+                endColumn + 1,
+
+            startDate:
+                new Date(segmentStart),
+
+            endDate:
+                new Date(segmentEnd)
+        });
+
+        segmentStart =
+            new Date(segmentEnd);
+
+        segmentStart.setDate(
+            segmentStart.getDate() + 1
+        );
+    }
+
+    return segments;
+}
+
+// =====================================================
+// RENDER CALENDAR
+// =====================================================
 
 function renderCalendar() {
+
+    if (!calendarGrid) {
+        return;
+    }
 
     calendarGrid.innerHTML = "";
 
@@ -327,20 +1053,30 @@ function renderCalendar() {
 
     const totalWeeks =
         Math.ceil(
-            (startDay + totalDays) / 7
+            (
+                startDay +
+                totalDays
+            ) / 7
         );
 
     monthTitle.textContent =
         `${monthNames[currentMonth]} ${currentYear}`;
 
+    // -------------------------------------------------
+    // CREATE DAY CELLS
+    // -------------------------------------------------
+
     for (
         let cellIndex = 0;
-        cellIndex < totalWeeks * 7;
+        cellIndex <
+        totalWeeks * 7;
         cellIndex++
     ) {
 
         const dayNumber =
-            cellIndex - startDay + 1;
+            cellIndex -
+            startDay +
+            1;
 
         const dayElement =
             document.createElement("div");
@@ -385,9 +1121,8 @@ function renderCalendar() {
         );
 
         if (
-            dayNumber === today.getDate() &&
-            currentMonth === today.getMonth() &&
-            currentYear === today.getFullYear()
+            dateString ===
+            todayString
         ) {
 
             dayElement.classList.add(
@@ -397,21 +1132,19 @@ function renderCalendar() {
 
         dayElement.addEventListener(
             "click",
-            function () {
+            function() {
 
                 document
                     .querySelectorAll(
                         ".day.selected"
                     )
-                    .forEach(
-                        function(selectedDay) {
+                    .forEach(function(day) {
 
-                            selectedDay.classList.remove(
-                                "selected"
-                            );
+                        day.classList.remove(
+                            "selected"
+                        );
 
-                        }
-                    );
+                    });
 
                 dayElement.classList.add(
                     "selected"
@@ -423,6 +1156,10 @@ function renderCalendar() {
             dayElement
         );
     }
+
+    // -------------------------------------------------
+    // MONTH RANGE
+    // -------------------------------------------------
 
     const monthStart =
         new Date(
@@ -438,157 +1175,32 @@ function renderCalendar() {
             totalDays
         );
 
-    const segments = [];
+    // -------------------------------------------------
+    // CREATE SEGMENTS
+    // -------------------------------------------------
 
-    tasks.forEach(
-        function(task) {
+    let segments = [];
 
-            if (!task.date) {
-                return;
-            }
+    tasks.forEach(function(task) {
 
-            const startDate =
-                new Date(
-                    task.date +
-                    "T00:00:00"
-                );
+        const taskSegments =
+            createTaskSegments(
+                task,
+                monthStart,
+                monthEnd,
+                firstDay,
+                startDay
+            );
 
-            const endDate =
-                new Date(
-                    (task.endDate ||
-                        task.date) +
-                    "T00:00:00"
-                );
+        segments =
+            segments.concat(
+                taskSegments
+            );
+    });
 
-            if (endDate < startDate) {
-                return;
-            }
-
-            if (
-                endDate < monthStart ||
-                startDate > monthEnd
-            ) {
-                return;
-            }
-
-            const visibleStart =
-                startDate > monthStart
-                    ? startDate
-                    : monthStart;
-
-            const visibleEnd =
-                endDate < monthEnd
-                    ? endDate
-                    : monthEnd;
-
-            let segmentStart =
-                new Date(
-                    visibleStart
-                );
-
-            while (
-                segmentStart <=
-                visibleEnd
-            ) {
-
-                const dayOffset =
-                    Math.floor(
-                        (
-                            segmentStart -
-                            firstDay
-                        ) /
-                        86400000
-                    );
-
-                const cellIndex =
-                    startDay +
-                    dayOffset;
-
-                const row =
-                    Math.floor(
-                        cellIndex / 7
-                    ) + 1;
-
-                const startColumn =
-                    (cellIndex % 7) + 1;
-
-                const daysUntilSaturday =
-                    6 -
-                    segmentStart.getDay();
-
-                let segmentEnd =
-                    new Date(
-                        segmentStart
-                    );
-
-                segmentEnd.setDate(
-                    segmentEnd.getDate() +
-                    daysUntilSaturday
-                );
-
-                if (
-                    segmentEnd >
-                    visibleEnd
-                ) {
-
-                    segmentEnd =
-                        new Date(
-                            visibleEnd
-                        );
-                }
-
-                const endDayOffset =
-                    Math.floor(
-                        (
-                            segmentEnd -
-                            firstDay
-                        ) /
-                        86400000
-                    );
-
-                const endCellIndex =
-                    startDay +
-                    endDayOffset;
-
-                const endColumn =
-                    (endCellIndex % 7) + 1;
-
-                segments.push({
-
-                    task: task,
-
-                    row: row,
-
-                    startColumn:
-                        startColumn,
-
-                    endColumn:
-                        endColumn + 1,
-
-                    startDate:
-                        new Date(
-                            segmentStart
-                        ),
-
-                    endDate:
-                        new Date(
-                            segmentEnd
-                        )
-
-                });
-
-                segmentStart =
-                    new Date(
-                        segmentEnd
-                    );
-
-                segmentStart.setDate(
-                    segmentStart.getDate() +
-                    1
-                );
-            }
-        }
-    );
+    // -------------------------------------------------
+    // ASSIGN LANES
+    // -------------------------------------------------
 
     const lanesByRow = {};
 
@@ -618,15 +1230,14 @@ function renderCalendar() {
 
                             return (
                                 existing.lane ===
-                                    lane &&
+                                lane &&
                                 !(
                                     segment.endColumn <=
-                                        existing.startColumn ||
+                                    existing.startColumn ||
                                     segment.startColumn >=
-                                        existing.endColumn
+                                    existing.endColumn
                                 )
                             );
-
                         }
                     );
 
@@ -642,11 +1253,13 @@ function renderCalendar() {
 
             lanesByRow[
                 segment.row
-            ].push(
-                segment
-            );
+            ].push(segment);
         }
     );
+
+    // -------------------------------------------------
+    // RENDER EVENTS
+    // -------------------------------------------------
 
     segments.forEach(
         function(segment) {
@@ -684,7 +1297,7 @@ function renderCalendar() {
                 `${20 + segment.lane}`;
 
             event.style.marginTop =
-                `${34 + (segment.lane * 28)}px`;
+                `${34 + segment.lane * 28}px`;
 
             event.style.backgroundColor =
                 task.color ||
@@ -694,6 +1307,10 @@ function renderCalendar() {
                 task.textColor ||
                 DEFAULT_TEXT_COLOR;
 
+            // -----------------------------------------
+            // LABEL
+            // -----------------------------------------
+
             const label =
                 document.createElement(
                     "span"
@@ -702,12 +1319,13 @@ function renderCalendar() {
             label.className =
                 "multi-day-event-label";
 
+            const originalStartDate =
+                parseDate(task.date);
+
             const taskStartsHere =
+                originalStartDate &&
                 segment.startDate.getTime() ===
-                new Date(
-                    task.date +
-                    "T00:00:00"
-                ).getTime();
+                originalStartDate.getTime();
 
             if (taskStartsHere) {
 
@@ -726,14 +1344,18 @@ function renderCalendar() {
                 label
             );
 
+            // -----------------------------------------
+            // END TIME
+            // -----------------------------------------
+
             const taskEndDate =
-                new Date(
-                    (task.endDate ||
-                        task.date) +
-                    "T00:00:00"
+                parseDate(
+                    task.endDate ||
+                    task.date
                 );
 
             const endsHere =
+                taskEndDate &&
                 segment.endDate.getTime() ===
                 taskEndDate.getTime();
 
@@ -758,15 +1380,17 @@ function renderCalendar() {
                 );
             }
 
+            // -----------------------------------------
+            // CLICK
+            // -----------------------------------------
+
             event.addEventListener(
                 "click",
-                function(e) {
+                function(eventObject) {
 
-                    e.stopPropagation();
+                    eventObject.stopPropagation();
 
-                    openTaskDetail(
-                        task
-                    );
+                    openTaskDetail(task);
                 }
             );
 
@@ -776,75 +1400,67 @@ function renderCalendar() {
         }
     );
 
+    // -------------------------------------------------
+    // SIDEBAR
+    // -------------------------------------------------
+
     renderUpcomingTasks();
 
-    taskCount.textContent =
-        tasks.length;
+    updateStatistics();
+}
 
-    totalTasks.textContent =
-        tasks.length;
+// =====================================================
+// UPDATE STATISTICS
+// =====================================================
 
-    completedTasks.textContent =
+function updateStatistics() {
+
+    const completed =
         tasks.filter(
-            task =>
-                task.completed
+            function(task) {
+                return task.completed;
+            }
         ).length;
 
-    upcomingTaskCount.textContent =
+    const upcoming =
         tasks.filter(
-            task =>
-                (
-                    task.endDate ||
-                    task.date
-                ) >= todayString &&
-                !task.completed
+            function(task) {
+
+                return (
+                    (
+                        task.endDate ||
+                        task.date
+                    ) >=
+                    todayString &&
+                    !task.completed
+                );
+            }
         ).length;
+
+    if (taskCount) {
+        taskCount.textContent =
+            tasks.length - completed;
+    }
+
+    if (totalTasks) {
+        totalTasks.textContent =
+            tasks.length;
+    }
+
+    if (completedTasks) {
+        completedTasks.textContent =
+            completed;
+    }
+
+    if (upcomingTaskCount) {
+        upcomingTaskCount.textContent =
+            upcoming;
+    }
 }
 
-function getCategoryClass(category) {
-
-    if (category === "video") {
-        return "blue";
-    }
-
-    if (category === "design") {
-        return "green";
-    }
-
-    if (category === "website") {
-        return "purple";
-    }
-
-    return "blue";
-}
-
-function getCategoryIcon(category) {
-
-    if (category === "video") {
-        return "🎥";
-    }
-
-    if (category === "design") {
-        return "🎨";
-    }
-
-    if (category === "website") {
-        return "💻";
-    }
-
-    return "📋";
-}
-
-function taskStartText(task) {
-
-    if (!task.start) {
-        return "";
-    }
-
-    return task.end
-        ? `${task.start} - ${task.end} ·`
-        : `${task.start} ·`;
-}
+// =====================================================
+// UPCOMING TASKS
+// =====================================================
 
 function renderUpcomingTasks() {
 
@@ -856,33 +1472,34 @@ function renderUpcomingTasks() {
 
     const upcoming =
         tasks
-            .filter(
-                task =>
+            .filter(function(task) {
+
+                return (
                     (
                         task.endDate ||
                         task.date
-                    ) >= todayString
-            )
-            .sort(
-                function(a, b) {
+                    ) >=
+                    todayString
+                );
+            })
+            .sort(function(a, b) {
 
-                    const dateA =
-                        `${a.date} ${a.start || "23:59"}`;
+                const dateA =
+                    `${a.date} ${a.start || "23:59"}`;
 
-                    const dateB =
-                        `${b.date} ${b.start || "23:59"}`;
+                const dateB =
+                    `${b.date} ${b.start || "23:59"}`;
 
-                    return dateA.localeCompare(
-                        dateB
-                    );
-                }
-            )
-            .slice(
-                0,
-                5
-            );
+                return dateA.localeCompare(
+                    dateB
+                );
+            })
+            .slice(0, 5);
 
-    if (upcoming.length === 0) {
+    if (
+        upcoming.length ===
+        0
+    ) {
 
         upcomingTasks.innerHTML = `
             <div class="no-upcoming">
@@ -905,6 +1522,17 @@ function renderUpcomingTasks() {
                 "task"
             );
 
+            if (task.completed) {
+
+                taskElement.classList.add(
+                    "completed"
+                );
+            }
+
+            // -----------------------------------------
+            // ICON
+            // -----------------------------------------
+
             const icon =
                 document.createElement(
                     "div"
@@ -921,6 +1549,10 @@ function renderUpcomingTasks() {
                 getCategoryIcon(
                     task.category
                 );
+
+            // -----------------------------------------
+            // INFO
+            // -----------------------------------------
 
             const info =
                 document.createElement(
@@ -946,8 +1578,7 @@ function renderUpcomingTasks() {
 
             const endDateText =
                 task.endDate &&
-                task.endDate !==
-                    task.date
+                task.endDate !== task.date
                     ? ` → ${formatUpcomingDate(task.endDate)}`
                     : "";
 
@@ -974,9 +1605,7 @@ function renderUpcomingTasks() {
                 "click",
                 function() {
 
-                    openTaskDetail(
-                        task
-                    );
+                    openTaskDetail(task);
                 }
             );
 
@@ -987,809 +1616,137 @@ function renderUpcomingTasks() {
     );
 }
 
-function formatUpcomingDate(dateString) {
-
-    const currentTodayString =
-        `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-    if (
-        dateString ===
-        currentTodayString
-    ) {
-
-        return "Today";
-    }
-
-    const date =
-        new Date(
-            dateString +
-            "T00:00:00"
-        );
-
-    return date.toLocaleDateString(
-        "en-GB",
-        {
-            day: "numeric",
-            month: "short"
-        }
-    );
-}
-
-newTaskButton.addEventListener(
-    "click",
-    function() {
-
-        editingTaskId =
-            null;
-
-        resetTaskColors();
-
-        taskModal.style.display =
-            "flex";
-    }
-);
-
-closeModal.addEventListener(
-    "click",
-    function() {
-
-        taskModal.style.display =
-            "none";
-    }
-);
-
-taskModal.addEventListener(
-    "click",
-    function(event) {
-
-        if (
-            event.target ===
-            taskModal
-        ) {
-
-            taskModal.style.display =
-                "none";
-        }
-    }
-);
-
-saveTaskButton.addEventListener(
-    "click",
-    function() {
-
-        const taskName =
-            document
-                .getElementById(
-                    "taskName"
-                )
-                .value
-                .trim();
-
-        const taskDate =
-            document
-                .getElementById(
-                    "taskDate"
-                )
-                .value;
-
-        const taskEndDate =
-            document
-                .getElementById(
-                    "taskEndDate"
-                )
-                .value;
-
-        const taskCategory =
-            document
-                .getElementById(
-                    "taskCategory"
-                )
-                .value;
-
-        const taskStart =
-            document
-                .getElementById(
-                    "taskStart"
-                )
-                .value;
-
-        const taskEnd =
-            document
-                .getElementById(
-                    "taskEnd"
-                )
-                .value;
-
-        const taskLocation =
-            document
-                .getElementById(
-                    "taskLocation"
-                )
-                .value
-                .trim();
-
-        const taskDetails =
-            document
-                .getElementById(
-                    "taskDetails"
-                )
-                .value
-                .trim();
-
-        const taskColor =
-            taskColorInput
-                ? taskColorInput.value
-                : DEFAULT_TASK_COLOR;
-
-        const taskTextColor =
-            taskTextColorInput
-                ? taskTextColorInput.value
-                : DEFAULT_TEXT_COLOR;
-
-        if (
-            !taskName ||
-            !taskDate
-        ) {
-
-            alert(
-                "กรุณากรอกชื่องานและ Start Date"
-            );
-
-            return;
-        }
-
-        const finalEndDate =
-            taskEndDate ||
-            taskDate;
-
-        if (
-            finalEndDate <
-            taskDate
-        ) {
-
-            alert(
-                "End Date ต้องไม่ก่อน Start Date"
-            );
-
-            return;
-        }
-
-        const isEditing =
-            editingTaskId !== null;
-
-        if (isEditing) {
-
-            const taskIndex =
-                tasks.findIndex(
-                    task =>
-                        task.id ===
-                        editingTaskId
-                );
-
-            if (taskIndex !== -1) {
-
-                tasks[taskIndex] = {
-                    ...tasks[taskIndex],
-
-                    name:
-                        taskName,
-
-                    date:
-                        taskDate,
-
-                    endDate:
-                        finalEndDate,
-
-                    category:
-                        taskCategory,
-
-                    start:
-                        taskStart,
-
-                    end:
-                        taskEnd,
-
-                    location:
-                        taskLocation,
-
-                    details:
-                        taskDetails,
-
-                    color:
-                        taskColor,
-
-                    textColor:
-                        taskTextColor
-                };
-            }
-
-            editingTaskId =
-                null;
-
-        } else {
-
-            const newTask = {
-
-                id:
-                    Date.now(),
-
-                name:
-                    taskName,
-
-                date:
-                    taskDate,
-
-                endDate:
-                    finalEndDate,
-
-                category:
-                    taskCategory,
-
-                start:
-                    taskStart,
-
-                end:
-                    taskEnd,
-
-                location:
-                    taskLocation,
-
-                details:
-                    taskDetails,
-
-                color:
-                    taskColor,
-
-                textColor:
-                    taskTextColor
-            };
-
-            tasks.push(
-                newTask
-            );
-        }
-
-        localStorage.setItem(
-            "myTasks",
-            JSON.stringify(
-                tasks
-            )
-        );
-
-        renderCalendar();
-
-        taskModal.style.display =
-            "none";
-
-        document.getElementById(
-            "taskName"
-        ).value = "";
-
-        document.getElementById(
-            "taskDate"
-        ).value = "";
-
-        document.getElementById(
-            "taskEndDate"
-        ).value = "";
-
-        document.getElementById(
-            "taskStart"
-        ).value = "";
-
-        document.getElementById(
-            "taskEnd"
-        ).value = "";
-
-        document.getElementById(
-            "taskLocation"
-        ).value = "";
-
-        document.getElementById(
-            "taskDetails"
-        ).value = "";
-
-        resetTaskColors();
-
-        if (isEditing) {
-
-            alert(
-                "แก้ไขงานเรียบร้อยแล้ว ✅"
-            );
-
-        } else {
-
-            alert(
-                "เพิ่มงานเรียบร้อยแล้ว ✅"
-            );
-        }
-    }
-);
-// ========================================
+// =====================================================
 // MONTH NAVIGATION
-// ========================================
+// =====================================================
 
-prevMonthButton.addEventListener(
-    "click",
-    function() {
+function goToPreviousMonth() {
 
-        currentMonth--;
+    currentMonth--;
 
-        if (currentMonth < 0) {
+    if (currentMonth < 0) {
 
-            currentMonth = 11;
-            currentYear--;
-
-        }
-
-        renderCalendar();
+        currentMonth = 11;
+        currentYear--;
     }
-);
 
-
-nextMonthButton.addEventListener(
-    "click",
-    function() {
-
-        currentMonth++;
-
-        if (currentMonth > 11) {
-
-            currentMonth = 0;
-            currentYear++;
-
-        }
-
-        renderCalendar();
-    }
-);
-
-
-todayButton.addEventListener(
-    "click",
-    function() {
-
-        currentMonth =
-            today.getMonth();
-
-        currentYear =
-            today.getFullYear();
-
-        renderCalendar();
-    }
-);
-
-
-// ========================================
-// TASK DETAIL
-// ========================================
-
-function openTaskDetail(task) {
-
-    selectedTaskId =
-        task.id;
-
-    detailTaskName.textContent =
-        task.name;
-
-    detailTaskCategory.textContent =
-        task.category;
-
-    detailTaskDate.textContent =
-        task.endDate &&
-        task.endDate !== task.date
-
-            ? `${formatTaskDate(task.date)} - ${formatTaskDate(task.endDate)}`
-
-            : formatTaskDate(
-                task.date
-            );
-
-    detailTaskStart.textContent =
-        task.start ||
-        "ไม่ได้ระบุ";
-
-    detailTaskEnd.textContent =
-        task.end ||
-        "ไม่ได้ระบุ";
-
-    detailTaskLocation.textContent =
-        task.location ||
-        "ไม่ได้ระบุ";
-
-    detailTaskDetails.textContent =
-        task.details ||
-        "ไม่มีรายละเอียดเพิ่มเติม";
-
-    updateCompleteButton(task);
-
-    taskDetailModal.style.display =
-        "flex";
+    renderCalendar();
 }
 
+function goToNextMonth() {
 
-// ========================================
-// FORMAT TASK DATE
-// ========================================
+    currentMonth++;
 
-function formatTaskDate(dateString) {
+    if (currentMonth > 11) {
 
-    const date =
-        new Date(
-            dateString +
-            "T00:00:00"
-        );
+        currentMonth = 0;
+        currentYear++;
+    }
 
-    return date.toLocaleDateString(
-        "en-GB",
-        {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }
-    );
+    renderCalendar();
 }
 
+function goToToday() {
 
-// ========================================
-// CLOSE DETAIL
-// ========================================
+    currentMonth =
+        today.getMonth();
 
-closeDetailModal.addEventListener(
-    "click",
-    function() {
+    currentYear =
+        today.getFullYear();
 
-        taskDetailModal.style.display =
-            "none";
+    renderCalendar();
+}
 
-    }
-);
-
-
-taskDetailModal.addEventListener(
-    "click",
-    function(event) {
-
-        if (
-            event.target ===
-            taskDetailModal
-        ) {
-
-            taskDetailModal.style.display =
-                "none";
-
-        }
-
-    }
-);
-
-
-// ========================================
-// EDIT TASK
-// ========================================
-
-editTaskButton.addEventListener(
-    "click",
-    function() {
-
-        const task =
-            tasks.find(
-                task =>
-                    task.id ===
-                    selectedTaskId
-            );
-
-        if (!task) {
-            return;
-        }
-
-        editingTaskId =
-            task.id;
-
-        document.getElementById(
-            "taskName"
-        ).value =
-            task.name;
-
-        document.getElementById(
-            "taskDate"
-        ).value =
-            task.date;
-
-        document.getElementById(
-            "taskEndDate"
-        ).value =
-            task.endDate ||
-            task.date;
-
-        document.getElementById(
-            "taskStart"
-        ).value =
-            task.start ||
-            "";
-
-        document.getElementById(
-            "taskEnd"
-        ).value =
-            task.end ||
-            "";
-
-        document.getElementById(
-            "taskCategory"
-        ).value =
-            task.category;
-
-        document.getElementById(
-            "taskLocation"
-        ).value =
-            task.location ||
-            "";
-
-        document.getElementById(
-            "taskDetails"
-        ).value =
-            task.details ||
-            "";
-
-        // โหลดสีเดิมกลับมา
-        if (taskColorInput) {
-
-            taskColorInput.value =
-                task.color ||
-                DEFAULT_TASK_COLOR;
-
-        }
-
-        if (taskTextColorInput) {
-
-            taskTextColorInput.value =
-                task.textColor ||
-                DEFAULT_TEXT_COLOR;
-
-        }
-
-        taskDetailModal.style.display =
-            "none";
-
-        taskModal.style.display =
-            "flex";
-    }
-);
-
-
-// ========================================
-// DELETE TASK
-// ========================================
-
-deleteTaskButton.addEventListener(
-    "click",
-    function() {
-
-        const confirmDelete =
-            confirm(
-                "ต้องการลบงานนี้ใช่ไหม?"
-            );
-
-        if (!confirmDelete) {
-            return;
-        }
-
-        tasks =
-            tasks.filter(
-                task =>
-                    task.id !==
-                    selectedTaskId
-            );
-
-        localStorage.setItem(
-            "myTasks",
-            JSON.stringify(
-                tasks
-            )
-        );
-
-        taskDetailModal.style.display =
-            "none";
-
-        renderCalendar();
-
-        selectedTaskId =
-            null;
-    }
-);
-
-
-// ========================================
+// =====================================================
 // SEARCH
-// ========================================
+// =====================================================
 
-searchButton.addEventListener(
-    "click",
-    function() {
+function toggleSearch() {
 
-        if (!searchBox) {
-            return;
-        }
-
-        searchBox.classList.toggle(
-            "active"
-        );
-
-        if (
-            searchBox.classList.contains(
-                "active"
-            )
-        ) {
-
-            searchInput.focus();
-        }
-    }
-);
-
-
-if (searchInput) {
-
-    searchInput.addEventListener(
-        "input",
-        function() {
-
-            const keyword =
-                searchInput.value
-                    .trim()
-                    .toLowerCase();
-
-            if (!keyword) {
-
-                renderCalendar();
-
-                return;
-            }
-
-            const originalTasks =
-                tasks;
-
-            const filteredTasks =
-                originalTasks.filter(
-                    function(task) {
-
-                        return (
-
-                            (task.name || "")
-                                .toLowerCase()
-                                .includes(
-                                    keyword
-                                ) ||
-
-                            (task.category || "")
-                                .toLowerCase()
-                                .includes(
-                                    keyword
-                                ) ||
-
-                            (task.location || "")
-                                .toLowerCase()
-                                .includes(
-                                    keyword
-                                ) ||
-
-                            (task.details || "")
-                                .toLowerCase()
-                                .includes(
-                                    keyword
-                                )
-
-                        );
-                    }
-                );
-
-            tasks =
-                filteredTasks;
-
-            renderCalendar();
-
-            tasks =
-                originalTasks;
-        }
-    );
-}
-
-
-// ========================================
-// COMPLETE TASK
-// ========================================
-
-completeTaskButton.addEventListener(
-    "click",
-    function() {
-
-        const task =
-            tasks.find(
-                function(task) {
-
-                    return (
-                        task.id ===
-                        selectedTaskId
-                    );
-
-                }
-            );
-
-        if (!task) {
-            return;
-        }
-
-        task.completed =
-            !task.completed;
-
-        localStorage.setItem(
-            "myTasks",
-            JSON.stringify(
-                tasks
-            )
-        );
-
-        updateCompleteButton(
-            task
-        );
-
-        renderCalendar();
-
-        if (task.completed) {
-
-            alert(
-                "ทำงานเสร็จแล้ว ✅"
-            );
-
-        } else {
-
-            alert(
-                "ยกเลิกสถานะเสร็จแล้ว"
-            );
-        }
-    }
-);
-
-
-// ========================================
-// COMPLETE BUTTON TEXT
-// ========================================
-
-function updateCompleteButton(task) {
-
-    if (!completeTaskButton) {
+    if (!searchBox) {
         return;
     }
 
-    if (task.completed) {
+    searchBox.classList.toggle(
+        "active"
+    );
 
-        completeTaskButton.textContent =
-            "↩️ Mark Incomplete";
+    if (
+        searchBox.classList.contains(
+            "active"
+        )
+    ) {
 
-        completeTaskButton.classList.add(
-            "completed"
-        );
-
-    } else {
-
-        completeTaskButton.textContent =
-            "✓ Complete";
-
-        completeTaskButton.classList.remove(
-            "completed"
-        );
+        searchInput.focus();
     }
 }
 
+// =====================================================
+// SEARCH TASKS
+// =====================================================
 
-// ========================================
+function searchTasks(keyword) {
+
+    const searchKeyword =
+        keyword
+            .trim()
+            .toLowerCase();
+
+    if (!searchKeyword) {
+
+        renderCalendar();
+
+        return;
+    }
+
+    const originalTasks =
+        tasks;
+
+    const filteredTasks =
+        originalTasks.filter(
+            function(task) {
+
+                return (
+
+                    (task.name || "")
+                        .toLowerCase()
+                        .includes(
+                            searchKeyword
+                        ) ||
+
+                    (task.category || "")
+                        .toLowerCase()
+                        .includes(
+                            searchKeyword
+                        ) ||
+
+                    (task.location || "")
+                        .toLowerCase()
+                        .includes(
+                            searchKeyword
+                        ) ||
+
+                    (task.details || "")
+                        .toLowerCase()
+                        .includes(
+                            searchKeyword
+                        )
+                );
+            }
+        );
+
+    tasks =
+        filteredTasks;
+
+    renderCalendar();
+
+    tasks =
+        originalTasks;
+}
+
+// =====================================================
 // DARK MODE
-// ========================================
-
-const themeButton =
-    document.getElementById(
-        "themeButton"
-    );
-
+// =====================================================
 
 function updateThemeIcon() {
 
@@ -1813,169 +1770,98 @@ function updateThemeIcon() {
     }
 }
 
+function loadTheme() {
 
-const savedTheme =
-    localStorage.getItem(
-        "calendarTheme"
-    );
-
-
-if (
-    savedTheme ===
-    "dark"
-) {
-
-    document.body.classList.add(
-        "dark-mode"
-    );
-}
-
-
-updateThemeIcon();
-
-
-if (themeButton) {
-
-    themeButton.addEventListener(
-        "click",
-        function() {
-
-            document.body.classList.toggle(
-                "dark-mode"
-            );
-
-            const isDark =
-                document.body.classList.contains(
-                    "dark-mode"
-                );
-
-            localStorage.setItem(
-                "calendarTheme",
-                isDark
-                    ? "dark"
-                    : "light"
-            );
-
-            updateThemeIcon();
-        }
-    );
-}
-
-
-// ========================================
-// ESC KEY
-// ========================================
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key !==
-            "Escape"
-        ) {
-
-            return;
-        }
-
-        if (
-            taskModal &&
-            taskModal.style.display ===
-                "flex"
-        ) {
-
-            taskModal.style.display =
-                "none";
-        }
-
-        if (
-            taskDetailModal &&
-            taskDetailModal.style.display ===
-                "flex"
-        ) {
-
-            taskDetailModal.style.display =
-                "none";
-        }
-    }
-);
-
-
-// ========================================
-// CLICK OUTSIDE SEARCH
-// ========================================
-
-document.addEventListener(
-    "click",
-    function(event) {
-
-        if (
-            !searchBox ||
-            !searchButton
-        ) {
-
-            return;
-        }
-
-        if (
-            !searchBox.contains(
-                event.target
-            ) &&
-            !searchButton.contains(
-                event.target
-            )
-        ) {
-
-            searchBox.classList.remove(
-                "active"
-            );
-        }
-    }
-);
-
-
-// ========================================
-// NOTIFICATION PERMISSION
-// ========================================
-
-if (
-    "Notification" in window
-) {
+    const savedTheme =
+        localStorage.getItem(
+            THEME_KEY
+        );
 
     if (
-        Notification.permission ===
-        "default"
+        savedTheme ===
+        "dark"
     ) {
 
-        setTimeout(
-            function() {
-
-                Notification.requestPermission()
-                    .catch(
-                        function() {
-                            // Browser อาจบล็อก permission
-                        }
-                    );
-
-            },
-            1500
+        document.body.classList.add(
+            "dark-mode"
         );
     }
+
+    updateThemeIcon();
 }
 
+function toggleTheme() {
 
-// ========================================
+    document.body.classList.toggle(
+        "dark-mode"
+    );
+
+    const isDark =
+        document.body.classList.contains(
+            "dark-mode"
+        );
+
+    localStorage.setItem(
+        THEME_KEY,
+        isDark
+            ? "dark"
+            : "light"
+    );
+
+    updateThemeIcon();
+}
+
+// =====================================================
+// NOTIFICATION PERMISSION
+// =====================================================
+
+function requestNotificationPermission() {
+
+    if (
+        !("Notification" in window)
+    ) {
+        return;
+    }
+
+    if (
+        Notification.permission !==
+        "default"
+    ) {
+        return;
+    }
+
+    setTimeout(
+        function() {
+
+            Notification
+                .requestPermission()
+                .catch(
+                    function() {
+                        // Browser อาจไม่อนุญาต
+                    }
+                );
+
+        },
+        1500
+    );
+}
+
+// =====================================================
 // SHOW NOTIFICATION
-// ========================================
+// =====================================================
 
 function showNotification(task) {
 
     if (
-        !("Notification" in window) ||
-        Notification.permission !==
-            "granted"
+        !("Notification" in window)
     ) {
+        return;
+    }
 
+    if (
+        Notification.permission !==
+        "granted"
+    ) {
         return;
     }
 
@@ -1988,17 +1874,15 @@ function showNotification(task) {
     );
 }
 
-
-// ========================================
-// CHECK TASK NOTIFICATIONS
-// ========================================
+// =====================================================
+// CHECK NOTIFICATIONS
+// =====================================================
 
 function checkTaskNotifications() {
 
     if (
         !("Notification" in window)
     ) {
-
         return;
     }
 
@@ -2006,7 +1890,6 @@ function checkTaskNotifications() {
         Notification.permission !==
         "granted"
     ) {
-
         return;
     }
 
@@ -2014,10 +1897,15 @@ function checkTaskNotifications() {
         new Date();
 
     const currentDate =
-        `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        formatDateToString(
+            now
+        );
 
     const currentTime =
         `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+    let changed =
+        false;
 
     tasks.forEach(
         function(task) {
@@ -2030,7 +1918,6 @@ function checkTaskNotifications() {
                 task.date !==
                 currentDate
             ) {
-
                 return;
             }
 
@@ -2042,7 +1929,6 @@ function checkTaskNotifications() {
                 task.start !==
                 currentTime
             ) {
-
                 return;
             }
 
@@ -2050,110 +1936,106 @@ function checkTaskNotifications() {
                 return;
             }
 
-            showNotification(
-                task
-            );
+            showNotification(task);
 
             task.notified =
                 true;
+
+            changed =
+                true;
         }
     );
 
-    localStorage.setItem(
-        "myTasks",
-        JSON.stringify(
-            tasks
-        )
-    );
-}
-
-
-// ========================================
-// CHECK EVERY MINUTE
-// ========================================
-
-setInterval(
-    checkTaskNotifications,
-    60000
-);
-
-checkTaskNotifications();
-
-
-// ========================================
-// FIX OLD TASK DATA
-// ========================================
-
-let changedOldTask =
-    false;
-
-tasks.forEach(
-    function(task) {
-
-        if (
-            !task.endDate &&
-            task.date
-        ) {
-
-            task.endDate =
-                task.date;
-
-            changedOldTask =
-                true;
-        }
-
-        // งานเก่าที่ไม่มีสี
-        if (!task.color) {
-
-            task.color =
-                DEFAULT_TASK_COLOR;
-
-            changedOldTask =
-                true;
-        }
-
-        if (!task.textColor) {
-
-            task.textColor =
-                DEFAULT_TEXT_COLOR;
-
-            changedOldTask =
-                true;
-        }
+    if (changed) {
+        saveTasks();
     }
-);
-
-
-if (changedOldTask) {
-
-    localStorage.setItem(
-        "myTasks",
-        JSON.stringify(
-            tasks
-        )
-    );
 }
 
+// =====================================================
+// FIX OLD TASK DATA
+// =====================================================
 
-// ========================================
+function fixOldTaskData() {
+
+    let changed =
+        false;
+
+    tasks.forEach(
+        function(task) {
+
+            if (
+                !task.endDate &&
+                task.date
+            ) {
+
+                task.endDate =
+                    task.date;
+
+                changed =
+                    true;
+            }
+
+            if (!task.color) {
+
+                task.color =
+                    DEFAULT_TASK_COLOR;
+
+                changed =
+                    true;
+            }
+
+            if (!task.textColor) {
+
+                task.textColor =
+                    DEFAULT_TEXT_COLOR;
+
+                changed =
+                    true;
+            }
+
+            if (
+                typeof task.completed !==
+                "boolean"
+            ) {
+
+                task.completed =
+                    false;
+
+                changed =
+                    true;
+            }
+
+            if (
+                typeof task.notified !==
+                "boolean"
+            ) {
+
+                task.notified =
+                    false;
+
+                changed =
+                    true;
+            }
+        }
+    );
+
+    if (changed) {
+        saveTasks();
+    }
+}
+
+// =====================================================
 // DEFAULT END DATE
-// ========================================
+// =====================================================
 
-const taskDateInput =
-    document.getElementById(
-        "taskDate"
-    );
+function setupDefaultEndDate() {
 
-const taskEndDateInput =
-    document.getElementById(
-        "taskEndDate"
-    );
-
-
-if (
-    taskDateInput &&
-    taskEndDateInput
-) {
+    if (
+        !taskDateInput ||
+        !taskEndDateInput
+    ) {
+        return;
+    }
 
     taskDateInput.addEventListener(
         "change",
@@ -2170,28 +2052,280 @@ if (
     );
 }
 
+// =====================================================
+// ESC KEY
+// =====================================================
 
-// ========================================
-// START
-// ========================================
+function setupEscapeKey() {
 
-function setupTaskColorPickers() {
+    document.addEventListener(
+        "keydown",
+        function(event) {
 
-    taskColorInput =
-        document.getElementById("taskColor");
+            if (
+                event.key !==
+                "Escape"
+            ) {
+                return;
+            }
 
-    taskTextColorInput =
-        document.getElementById("taskTextColor");
+            if (
+                taskModal &&
+                taskModal.style.display ===
+                "flex"
+            ) {
 
-    if (taskColorInput) {
-        taskColorInput.value =
-            DEFAULT_TASK_COLOR;
+                closeNewTaskModal();
+            }
+
+            if (
+                taskDetailModal &&
+                taskDetailModal.style.display ===
+                "flex"
+            ) {
+
+                closeTaskDetail();
+            }
+        }
+    );
+}
+
+// =====================================================
+// CLICK OUTSIDE SEARCH
+// =====================================================
+
+function setupSearchOutsideClick() {
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                !searchBox ||
+                !searchButton
+            ) {
+                return;
+            }
+
+            if (
+                !searchBox.contains(
+                    event.target
+                ) &&
+                !searchButton.contains(
+                    event.target
+                )
+            ) {
+
+                searchBox.classList.remove(
+                    "active"
+                );
+            }
+        }
+    );
+}
+
+// =====================================================
+// MODAL OUTSIDE CLICK
+// =====================================================
+
+function setupModalOutsideClick() {
+
+    if (taskModal) {
+
+        taskModal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target ===
+                    taskModal
+                ) {
+
+                    closeNewTaskModal();
+                }
+            }
+        );
     }
 
-    if (taskTextColorInput) {
-        taskTextColorInput.value =
-            DEFAULT_TEXT_COLOR;
+    if (taskDetailModal) {
+
+        taskDetailModal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target ===
+                    taskDetailModal
+                ) {
+
+                    closeTaskDetail();
+                }
+            }
+        );
     }
 }
 
-renderCalendar();
+// =====================================================
+// EVENT LISTENERS
+// =====================================================
+
+function setupEventListeners() {
+
+    if (newTaskButton) {
+
+        newTaskButton.addEventListener(
+            "click",
+            openNewTaskModal
+        );
+    }
+
+    if (closeModal) {
+
+        closeModal.addEventListener(
+            "click",
+            closeNewTaskModal
+        );
+    }
+
+    if (saveTaskButton) {
+
+        saveTaskButton.addEventListener(
+            "click",
+            createTask
+        );
+    }
+
+    if (prevMonthButton) {
+
+        prevMonthButton.addEventListener(
+            "click",
+            goToPreviousMonth
+        );
+    }
+
+    if (nextMonthButton) {
+
+        nextMonthButton.addEventListener(
+            "click",
+            goToNextMonth
+        );
+    }
+
+    if (todayButton) {
+
+        todayButton.addEventListener(
+            "click",
+            goToToday
+        );
+    }
+
+    if (closeTaskDetailModal) {
+
+        closeTaskDetailModal.addEventListener(
+            "click",
+            closeTaskDetail
+        );
+    }
+
+    if (editTaskButton) {
+
+        editTaskButton.addEventListener(
+            "click",
+            editSelectedTask
+        );
+    }
+
+    if (deleteTaskButton) {
+
+        deleteTaskButton.addEventListener(
+            "click",
+            deleteSelectedTask
+        );
+    }
+
+    if (completeTaskButton) {
+
+        completeTaskButton.addEventListener(
+            "click",
+            toggleCompleteTask
+        );
+    }
+
+    if (searchButton) {
+
+        searchButton.addEventListener(
+            "click",
+            toggleSearch
+        );
+    }
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function() {
+
+                searchTasks(
+                    searchInput.value
+                );
+            }
+        );
+    }
+
+    if (themeButton) {
+
+        themeButton.addEventListener(
+            "click",
+            toggleTheme
+        );
+    }
+}
+
+// =====================================================
+// START APP
+// =====================================================
+
+function initCalendar() {
+
+    // แก้ข้อมูลเก่าก่อน
+    fixOldTaskData();
+
+    // โหลด Theme
+    loadTheme();
+
+    // ตั้ง Event
+    setupEventListeners();
+
+    // ตั้ง Modal
+    setupModalOutsideClick();
+
+    // ตั้ง ESC
+    setupEscapeKey();
+
+    // ตั้ง Search
+    setupSearchOutsideClick();
+
+    // ตั้ง End Date
+    setupDefaultEndDate();
+
+    // ขอ Notification
+    requestNotificationPermission();
+
+    // วาด Calendar
+    renderCalendar();
+
+    // เช็ก Notification ทันที
+    checkTaskNotifications();
+
+    // เช็กทุก 1 นาที
+    setInterval(
+        checkTaskNotifications,
+        60000
+    );
+}
+
+// =====================================================
+// RUN
+// =====================================================
+
+initCalendar();
