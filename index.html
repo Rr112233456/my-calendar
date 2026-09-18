@@ -41,25 +41,43 @@
 
         </div>
 
+
         <div class="header-actions">
 
-            <button class="icon-button" id="searchButton">
+            <button
+                class="icon-button"
+                id="searchButton"
+            >
                 🔍
             </button>
 
-            <div class="search-box" id="searchBox">
+
+            <div
+                class="search-box"
+                id="searchBox"
+            >
+
                 <input
                     type="text"
                     id="searchInput"
                     placeholder="Search tasks..."
                 >
+
             </div>
 
-            <button class="icon-button" id="themeButton">
+
+            <button
+                class="icon-button"
+                id="themeButton"
+            >
                 ☀️
             </button>
 
-            <button class="new-task-button" id="newTaskButton">
+
+            <button
+                class="new-task-button"
+                id="newTaskButton"
+            >
                 + New Task
             </button>
 
@@ -72,28 +90,49 @@
 
     <main class="container">
 
+
         <!-- ================= CALENDAR ================= -->
 
         <section class="calendar-section">
 
+
             <div class="calendar-header">
 
                 <div>
-                    <h2 id="monthTitle">September 2026</h2>
-                    <p>Keep track of your work</p>
+
+                    <h2 id="monthTitle">
+                        September 2026
+                    </h2>
+
+                    <p>
+                        Keep track of your work
+                    </p>
+
                 </div>
+
 
                 <div class="calendar-controls">
 
-                    <button class="control-button" id="prevMonth">
+                    <button
+                        class="control-button"
+                        id="prevMonth"
+                    >
                         ‹
                     </button>
 
-                    <button class="today-button" id="todayButton">
+
+                    <button
+                        class="today-button"
+                        id="todayButton"
+                    >
                         Today
                     </button>
 
-                    <button class="control-button" id="nextMonth">
+
+                    <button
+                        class="control-button"
+                        id="nextMonth"
+                    >
                         ›
                     </button>
 
@@ -102,7 +141,7 @@
             </div>
 
 
-            <!-- Week days -->
+            <!-- ================= WEEK DAYS ================= -->
 
             <div class="weekdays">
 
@@ -117,9 +156,13 @@
             </div>
 
 
-            <!-- Calendar -->
+            <!-- ================= CALENDAR ================= -->
 
-            <div class="calendar-grid" id="calendarGrid"></div>
+            <div
+                class="calendar-grid"
+                id="calendarGrid"
+            ></div>
+
 
         </section>
 
@@ -128,56 +171,103 @@
 
         <aside class="sidebar">
 
-            <!-- Upcoming -->
+
+            <!-- ================= UPCOMING ================= -->
 
             <div class="sidebar-card">
 
                 <div class="card-header">
 
                     <div>
-                        <h3>Upcoming Tasks</h3>
-                        <p>Your next activities</p>
+
+                        <h3>
+                            Upcoming Tasks
+                        </h3>
+
+                        <p>
+                            Your next activities
+                        </p>
+
                     </div>
 
-                    <span class="task-count" id="taskCount">
+
+                    <span
+                        class="task-count"
+                        id="taskCount"
+                    >
                         0
                     </span>
 
                 </div>
 
-                <div class="task-list" id="upcomingTasks"></div>
+
+                <div
+                    class="task-list"
+                    id="upcomingTasks"
+                ></div>
 
             </div>
 
 
-            <!-- Statistics -->
+            <!-- ================= STATISTICS ================= -->
 
             <div class="sidebar-card">
 
                 <div class="card-header">
 
                     <div>
-                        <h3>This Month</h3>
-                        <p>Work overview</p>
+
+                        <h3>
+                            This Month
+                        </h3>
+
+                        <p>
+                            Work overview
+                        </p>
+
                     </div>
 
                 </div>
 
+
                 <div class="stats">
 
                     <div class="stat">
-                        <strong id="totalTasks">0</strong>
-                        <span>Total Tasks</span>
+
+                        <strong id="totalTasks">
+                            0
+                        </strong>
+
+                        <span>
+                            Total Tasks
+                        </span>
+
                     </div>
 
-                    <div class="stat">
-                        <strong id="completedTasks">0</strong>
-                        <span>Completed</span>
-                    </div>
 
                     <div class="stat">
-                        <strong id="upcomingTaskCount">0</strong>
-                        <span>Upcoming</span>
+
+                        <strong id="completedTasks">
+                            0
+                        </strong>
+
+                        <span>
+                            Completed
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong id="upcomingTaskCount">
+                            0
+                        </strong>
+
+                        <span>
+                            Upcoming
+                        </span>
+
                     </div>
 
                 </div>
@@ -191,27 +281,46 @@
 
     <!-- ================= NEW TASK MODAL ================= -->
 
-    <div class="modal" id="taskModal">
+    <div
+        class="modal"
+        id="taskModal"
+    >
 
         <div class="modal-content">
+
 
             <div class="modal-header">
 
                 <div>
-                    <h2>New Task</h2>
-                    <p>Create a new work schedule</p>
+
+                    <h2>
+                        New Task
+                    </h2>
+
+                    <p>
+                        Create a new work schedule
+                    </p>
+
                 </div>
 
-                <button class="close-modal" id="closeModal">
+
+                <button
+                    class="close-modal"
+                    id="closeModal"
+                >
                     ×
                 </button>
 
             </div>
 
 
+            <!-- ================= TASK NAME ================= -->
+
             <div class="form-group">
 
-                <label>Task Name</label>
+                <label>
+                    Task Name
+                </label>
 
                 <input
                     type="text"
@@ -221,11 +330,16 @@
             </div>
 
 
+            <!-- ================= DATE ================= -->
+
             <div class="form-row">
+
 
                 <div class="form-group">
 
-                    <label>Date</label>
+                    <label>
+                        Start Date
+                    </label>
 
                     <input
                         type="date"
@@ -237,18 +351,51 @@
 
                 <div class="form-group">
 
-                    <label>Category</label>
+                    <label>
+                        End Date
+                    </label>
 
-                    <select id="taskCategory">
-
-                        <option value="work">Work</option>
-                        <option value="video">Video</option>
-                        <option value="Photo">Photo</option>
-                        <option value="Other">Other</option>
-
-                    </select>
+                    <input
+                        type="date"
+                        id="taskEndDate"
+                    >
 
                 </div>
+
+
+            </div>
+
+
+            <!-- ================= CATEGORY ================= -->
+
+            <div class="form-group">
+
+                <label>
+                    Category
+                </label>
+
+
+                <select
+                    id="taskCategory"
+                >
+
+                    <option value="work">
+                        Work
+                    </option>
+
+                    <option value="video">
+                        Video
+                    </option>
+
+                    <option value="Photo">
+                        Photo
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
 
             </div>
 
@@ -257,9 +404,12 @@
 
             <div class="form-row">
 
+
                 <div class="form-group">
 
-                    <label>Start Time</label>
+                    <label>
+                        Start Time
+                    </label>
 
                     <input
                         type="time"
@@ -271,7 +421,9 @@
 
                 <div class="form-group">
 
-                    <label>End Time</label>
+                    <label>
+                        End Time
+                    </label>
 
                     <input
                         type="time"
@@ -280,12 +432,17 @@
 
                 </div>
 
+
             </div>
 
 
+            <!-- ================= LOCATION ================= -->
+
             <div class="form-group">
 
-                <label>Location</label>
+                <label>
+                    Location
+                </label>
 
                 <input
                     type="text"
@@ -295,9 +452,13 @@
             </div>
 
 
+            <!-- ================= DETAILS ================= -->
+
             <div class="form-group">
 
-                <label>Details</label>
+                <label>
+                    Details
+                </label>
 
                 <textarea
                     id="taskDetails"
@@ -306,12 +467,15 @@
             </div>
 
 
+            <!-- ================= SAVE ================= -->
+
             <button
                 class="save-task-button"
                 id="saveTaskButton"
             >
                 Save Task
             </button>
+
 
         </div>
 
@@ -320,55 +484,115 @@
 
     <!-- ================= TASK DETAIL MODAL ================= -->
 
-    <div class="modal" id="taskDetailModal">
+    <div
+        class="modal"
+        id="taskDetailModal"
+    >
 
         <div class="modal-content">
+
 
             <div class="modal-header">
 
                 <div>
-                    <h2 id="detailTaskName">Task Name</h2>
-                    <p id="detailTaskCategory">Category</p>
+
+                    <h2 id="detailTaskName">
+                        Task Name
+                    </h2>
+
+                    <p id="detailTaskCategory">
+                        Category
+                    </p>
+
                 </div>
 
-                <button class="close-modal" id="closeDetailModal">
+
+                <button
+                    class="close-modal"
+                    id="closeDetailModal"
+                >
                     ×
                 </button>
 
             </div>
 
 
+            <!-- ================= TASK INFO ================= -->
+
             <div class="task-detail-info">
 
+
+                <!-- DATE -->
+
                 <div class="detail-item">
-                    <span>📅 Date</span>
-                    <strong id="detailTaskDate">-</strong>
+
+                    <span>
+                        📅 Date
+                    </span>
+
+                    <strong id="detailTaskDate">
+                        -
+                    </strong>
+
                 </div>
 
 
+                <!-- START TIME -->
+
                 <div class="detail-item">
-                    <span>⏰ Start Time</span>
-                    <strong id="detailTaskStart">-</strong>
+
+                    <span>
+                        ⏰ Start Time
+                    </span>
+
+                    <strong id="detailTaskStart">
+                        -
+                    </strong>
+
                 </div>
 
 
+                <!-- END TIME -->
+
                 <div class="detail-item">
-                    <span>⏰ End Time</span>
-                    <strong id="detailTaskEnd">-</strong>
+
+                    <span>
+                        ⏰ End Time
+                    </span>
+
+                    <strong id="detailTaskEnd">
+                        -
+                    </strong>
+
                 </div>
 
 
+                <!-- LOCATION -->
+
                 <div class="detail-item">
-                    <span>📍 Location</span>
-                    <strong id="detailTaskLocation">-</strong>
+
+                    <span>
+                        📍 Location
+                    </span>
+
+                    <strong id="detailTaskLocation">
+                        -
+                    </strong>
+
                 </div>
+
 
             </div>
 
 
+            <!-- ================= DETAILS ================= -->
+
             <div class="detail-description">
 
-                <span>Details</span>
+                <span>
+                    Details
+                </span>
+
 
                 <p id="detailTaskDetails">
                     -
@@ -377,7 +601,10 @@
             </div>
 
 
+            <!-- ================= ACTIONS ================= -->
+
             <div class="task-actions">
+
 
                 <button
                     class="complete-task-button"
@@ -402,14 +629,16 @@
                     🗑️ Delete
                 </button>
 
+
             </div>
+
 
         </div>
 
     </div>
 
 
-    <!-- JavaScript -->
+    <!-- ================= JAVASCRIPT ================= -->
 
     <script src="script.js"></script>
 
