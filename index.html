@@ -1,82 +1,119 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>My Calendar</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
 </head>
+
 
 <body>
 
-    <!-- ================= HEADER ================= -->
+    <!-- ========================================
+         HEADER
+    ========================================= -->
 
-    <header class="topbar">
+    <header class="header">
 
-        <div class="brand">
+        <div class="header-left">
 
-            <div class="brand-icon">
-                📅
-            </div>
-
-            <div>
-                <h1>CALENDAR FOR DEKTORTE</h1>
-                <p>Personal Work Planner</p>
-            </div>
+            <h1>
+                My Calendar
+            </h1>
 
         </div>
 
 
-        <div class="header-actions">
+        <div class="header-center">
 
             <button
-                class="icon-button"
+                id="prevMonth"
+                class="nav-button"
+                type="button"
+            >
+                ‹
+            </button>
+
+
+            <h2 id="monthTitle">
+                January 2026
+            </h2>
+
+
+            <button
+                id="nextMonth"
+                class="nav-button"
+                type="button"
+            >
+                ›
+            </button>
+
+
+            <button
+                id="todayButton"
+                class="today-button"
+                type="button"
+            >
+                Today
+            </button>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <button
                 id="searchButton"
+                class="icon-button"
+                type="button"
+                title="Search"
             >
                 🔍
             </button>
 
 
             <div
-                class="search-box"
                 id="searchBox"
+                class="search-box hidden"
             >
 
                 <input
-                    type="text"
                     id="searchInput"
+                    type="text"
                     placeholder="Search tasks..."
+                    autocomplete="off"
                 >
 
             </div>
 
 
             <button
-                class="icon-button"
                 id="themeButton"
+                class="icon-button"
+                type="button"
+                title="Toggle theme"
             >
-                ☀️
+                🌙
             </button>
 
 
             <button
-                class="new-task-button"
                 id="newTaskButton"
+                class="new-task-button"
+                type="button"
             >
                 + New Task
             </button>
@@ -86,115 +123,86 @@
     </header>
 
 
-    <!-- ================= MAIN ================= -->
 
-    <main class="container">
+    <!-- ========================================
+         MAIN
+    ========================================= -->
+
+    <main class="main-container">
 
 
-        <!-- ================= CALENDAR ================= -->
+        <!-- ====================================
+             CALENDAR SECTION
+        ===================================== -->
 
         <section class="calendar-section">
 
 
-            <div class="calendar-header">
+            <!-- WEEK DAYS -->
+
+            <div class="week-header">
 
                 <div>
-
-                    <h2 id="monthTitle">
-                        September 2026
-                    </h2>
-
-                    <p>
-                        Keep track of your work
-                    </p>
-
+                    Sunday
                 </div>
 
+                <div>
+                    Monday
+                </div>
 
-                <div class="calendar-controls">
+                <div>
+                    Tuesday
+                </div>
 
-                    <button
-                        class="control-button"
-                        id="prevMonth"
-                    >
-                        ‹
-                    </button>
+                <div>
+                    Wednesday
+                </div>
 
+                <div>
+                    Thursday
+                </div>
 
-                    <button
-                        class="today-button"
-                        id="todayButton"
-                    >
-                        Today
-                    </button>
+                <div>
+                    Friday
+                </div>
 
-
-                    <button
-                        class="control-button"
-                        id="nextMonth"
-                    >
-                        ›
-                    </button>
-
+                <div>
+                    Saturday
                 </div>
 
             </div>
 
 
-            <!-- ================= WEEK DAYS ================= -->
-
-            <div class="weekdays">
-
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-
-            </div>
-
-
-            <!-- ================= CALENDAR ================= -->
+            <!-- CALENDAR -->
 
             <div
-                class="calendar-grid"
                 id="calendarGrid"
+                class="calendar-grid"
             ></div>
 
 
         </section>
 
 
-        <!-- ================= SIDEBAR ================= -->
+
+        <!-- ====================================
+             SIDEBAR
+        ===================================== -->
 
         <aside class="sidebar">
 
 
-            <!-- ================= UPCOMING ================= -->
+            <!-- UPCOMING TASKS -->
 
             <div class="sidebar-card">
 
                 <div class="card-header">
 
-                    <div>
+                    <h3>
+                        Upcoming Tasks
+                    </h3>
 
-                        <h3>
-                            Upcoming Tasks
-                        </h3>
-
-                        <p>
-                            Your next activities
-                        </p>
-
-                    </div>
-
-
-                    <span
-                        class="task-count"
-                        id="taskCount"
-                    >
+                    <span id="upcomingTaskCount">
                         0
                     </span>
 
@@ -202,35 +210,25 @@
 
 
                 <div
-                    class="task-list"
                     id="upcomingTasks"
+                    class="upcoming-tasks"
                 ></div>
 
             </div>
 
 
-            <!-- ================= STATISTICS ================= -->
+
+            <!-- TASK STATISTICS -->
 
             <div class="sidebar-card">
 
-                <div class="card-header">
-
-                    <div>
-
-                        <h3>
-                            This Month
-                        </h3>
-
-                        <p>
-                            Work overview
-                        </p>
-
-                    </div>
-
-                </div>
+                <h3>
+                    Task Statistics
+                </h3>
 
 
                 <div class="stats">
+
 
                     <div class="stat">
 
@@ -260,30 +258,35 @@
 
                     <div class="stat">
 
-                        <strong id="upcomingTaskCount">
+                        <strong id="taskCount">
                             0
                         </strong>
 
                         <span>
-                            Upcoming
+                            Remaining
                         </span>
 
                     </div>
 
+
                 </div>
 
             </div>
+
 
         </aside>
 
     </main>
 
 
-    <!-- ================= NEW TASK MODAL ================= -->
+
+    <!-- ========================================
+         NEW TASK MODAL
+    ========================================= -->
 
     <div
-        class="modal"
         id="taskModal"
+        class="modal hidden"
     >
 
         <div class="modal-content">
@@ -291,22 +294,15 @@
 
             <div class="modal-header">
 
-                <div>
-
-                    <h2>
-                        New Task
-                    </h2>
-
-                    <p>
-                        Create a new work schedule
-                    </p>
-
-                </div>
+                <h2>
+                    New Task
+                </h2>
 
 
                 <button
-                    class="close-modal"
-                    id="closeModal"
+                    id="closeTaskModal"
+                    class="close-button"
+                    type="button"
                 >
                     ×
                 </button>
@@ -314,179 +310,242 @@
             </div>
 
 
-            <!-- ================= TASK NAME ================= -->
 
-            <div class="form-group">
+            <div class="modal-body">
 
-                <label>
-                    Task Name
-                </label>
 
-                <input
-                    type="text"
-                    id="taskName"
+                <!-- TASK NAME -->
+
+                <div class="form-group">
+
+                    <label for="taskName">
+                        Task Name
+                    </label>
+
+                    <input
+                        id="taskName"
+                        type="text"
+                        placeholder="Enter task name"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label for="taskDate">
+                            Start Date
+                        </label>
+
+                        <input
+                            id="taskDate"
+                            type="date"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="taskEndDate">
+                            End Date
+                        </label>
+
+                        <input
+                            id="taskEndDate"
+                            type="date"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- CATEGORY -->
+
+                <div class="form-group">
+
+                    <label for="taskCategory">
+                        Category
+                    </label>
+
+                    <select id="taskCategory">
+
+                        <option value="work">
+                            Work
+                        </option>
+
+                        <option value="personal">
+                            Personal
+                        </option>
+
+                        <option value="study">
+                            Study
+                        </option>
+
+                        <option value="meeting">
+                            Meeting
+                        </option>
+
+                        <option value="other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- TIME -->
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label for="taskStart">
+                            Start Time
+                        </label>
+
+                        <input
+                            id="taskStart"
+                            type="time"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="taskEnd">
+                            End Time
+                        </label>
+
+                        <input
+                            id="taskEnd"
+                            type="time"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- LOCATION -->
+
+                <div class="form-group">
+
+                    <label for="taskLocation">
+                        Location
+                    </label>
+
+                    <input
+                        id="taskLocation"
+                        type="text"
+                        placeholder="Enter location"
+                    >
+
+                </div>
+
+
+
+                <!-- DETAILS -->
+
+                <div class="form-group">
+
+                    <label for="taskDetails">
+                        Details
+                    </label>
+
+                    <textarea
+                        id="taskDetails"
+                        rows="4"
+                        placeholder="Enter details..."
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- =================================
+                     TASK COLORS
+                ================================== -->
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label for="taskColor">
+                            สีแถบงาน
+                        </label>
+
+                        <input
+                            type="color"
+                            id="taskColor"
+                            value="#eaf2ff"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="taskTextColor">
+                            สีตัวหนังสือ
+                        </label>
+
+                        <input
+                            type="color"
+                            id="taskTextColor"
+                            value="#1f2937"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- SAVE -->
+
+                <button
+                    id="saveTaskButton"
+                    class="save-task-button"
+                    type="button"
                 >
-
-            </div>
-
-
-            <!-- ================= DATE ================= -->
-
-            <div class="form-row">
-
-
-                <div class="form-group">
-
-                    <label>
-                        Start Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="taskDate"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        End Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="taskEndDate"
-                    >
-
-                </div>
+                    Save Task
+                </button>
 
 
             </div>
-
-
-            <!-- ================= CATEGORY ================= -->
-
-            <div class="form-group">
-
-                <label>
-                    Category
-                </label>
-
-
-                <select
-                    id="taskCategory"
-                >
-
-                    <option value="work">
-                        Work
-                    </option>
-
-                    <option value="video">
-                        Video
-                    </option>
-
-                    <option value="Photo">
-                        Photo
-                    </option>
-
-                    <option value="Other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- ================= TIME ================= -->
-
-            <div class="form-row">
-
-
-                <div class="form-group">
-
-                    <label>
-                        Start Time
-                    </label>
-
-                    <input
-                        type="time"
-                        id="taskStart"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        End Time
-                    </label>
-
-                    <input
-                        type="time"
-                        id="taskEnd"
-                    >
-
-                </div>
-
-
-            </div>
-
-
-            <!-- ================= LOCATION ================= -->
-
-            <div class="form-group">
-
-                <label>
-                    Location
-                </label>
-
-                <input
-                    type="text"
-                    id="taskLocation"
-                >
-
-            </div>
-
-
-            <!-- ================= DETAILS ================= -->
-
-            <div class="form-group">
-
-                <label>
-                    Details
-                </label>
-
-                <textarea
-                    id="taskDetails"
-                ></textarea>
-
-            </div>
-
-
-            <!-- ================= SAVE ================= -->
-
-            <button
-                class="save-task-button"
-                id="saveTaskButton"
-            >
-                Save Task
-            </button>
-
 
         </div>
 
     </div>
 
 
-    <!-- ================= TASK DETAIL MODAL ================= -->
+
+    <!-- ========================================
+         TASK DETAIL MODAL
+    ========================================= -->
 
     <div
-        class="modal"
         id="taskDetailModal"
+        class="modal hidden"
     >
 
         <div class="modal-content">
@@ -494,22 +553,15 @@
 
             <div class="modal-header">
 
-                <div>
-
-                    <h2 id="detailTaskName">
-                        Task Name
-                    </h2>
-
-                    <p id="detailTaskCategory">
-                        Category
-                    </p>
-
-                </div>
+                <h2 id="detailTaskName">
+                    Task
+                </h2>
 
 
                 <button
-                    class="close-modal"
-                    id="closeDetailModal"
+                    id="closeTaskDetailModal"
+                    class="close-button"
+                    type="button"
                 >
                     ×
                 </button>
@@ -517,9 +569,22 @@
             </div>
 
 
-            <!-- ================= TASK INFO ================= -->
+            <div class="modal-body">
 
-            <div class="task-detail-info">
+
+                <!-- CATEGORY -->
+
+                <div class="detail-item">
+
+                    <span>
+                        Category
+                    </span>
+
+                    <strong id="detailTaskCategory">
+                        -
+                    </strong>
+
+                </div>
 
 
                 <!-- DATE -->
@@ -527,7 +592,7 @@
                 <div class="detail-item">
 
                     <span>
-                        📅 Date
+                        Date
                     </span>
 
                     <strong id="detailTaskDate">
@@ -537,12 +602,12 @@
                 </div>
 
 
-                <!-- START TIME -->
+                <!-- START -->
 
                 <div class="detail-item">
 
                     <span>
-                        ⏰ Start Time
+                        Start Time
                     </span>
 
                     <strong id="detailTaskStart">
@@ -552,12 +617,12 @@
                 </div>
 
 
-                <!-- END TIME -->
+                <!-- END -->
 
                 <div class="detail-item">
 
                     <span>
-                        ⏰ End Time
+                        End Time
                     </span>
 
                     <strong id="detailTaskEnd">
@@ -572,7 +637,7 @@
                 <div class="detail-item">
 
                     <span>
-                        📍 Location
+                        Location
                     </span>
 
                     <strong id="detailTaskLocation">
@@ -582,65 +647,205 @@
                 </div>
 
 
+                <!-- DETAILS -->
+
+                <div class="detail-description">
+
+                    <span>
+                        Details
+                    </span>
+
+                    <p id="detailTaskDetails">
+                        -
+                    </p>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="modal-actions">
+
+
+                    <button
+                        id="completeTaskButton"
+                        class="complete-button"
+                        type="button"
+                    >
+                        Complete
+                    </button>
+
+
+                    <button
+                        id="editTaskButton"
+                        class="edit-button"
+                        type="button"
+                    >
+                        Edit
+                    </button>
+
+
+                    <button
+                        id="deleteTaskButton"
+                        class="delete-button"
+                        type="button"
+                    >
+                        Delete
+                    </button>
+
+
+                </div>
+
+
             </div>
-
-
-            <!-- ================= DETAILS ================= -->
-
-            <div class="detail-description">
-
-                <span>
-                    Details
-                </span>
-
-
-                <p id="detailTaskDetails">
-                    -
-                </p>
-
-            </div>
-
-
-            <!-- ================= ACTIONS ================= -->
-
-            <div class="task-actions">
-
-
-                <button
-                    class="complete-task-button"
-                    id="completeTaskButton"
-                >
-                    ✓ Complete
-                </button>
-
-
-                <button
-                    class="edit-task-button"
-                    id="editTaskButton"
-                >
-                    ✏️ Edit
-                </button>
-
-
-                <button
-                    class="delete-task-button"
-                    id="deleteTaskButton"
-                >
-                    🗑️ Delete
-                </button>
-
-
-            </div>
-
 
         </div>
 
     </div>
 
 
-    <!-- ================= JAVASCRIPT ================= -->
+
+    <!-- ========================================
+         SCRIPT
+    ========================================= -->
 
     <script src="script.js"></script>
+
+<!-- ========================================
+     END OF NEW TASK MODAL
+========================================= -->
+
+
+
+<!-- ========================================
+     END OF TASK DETAIL MODAL
+========================================= -->
+
+
+
+<!-- ========================================
+     NOTIFICATION
+========================================= -->
+
+<div
+    id="notification"
+    class="notification hidden"
+>
+
+    <div class="notification-content">
+
+        <span
+            id="notificationIcon"
+            class="notification-icon"
+        >
+            🔔
+        </span>
+
+        <div>
+
+            <strong id="notificationTitle">
+                Task Reminder
+            </strong>
+
+            <p id="notificationMessage">
+                You have an upcoming task.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     CONFIRMATION MODAL
+========================================= -->
+
+<div
+    id="confirmModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content confirm-modal-content">
+
+
+        <div class="modal-header">
+
+            <h2 id="confirmTitle">
+                Confirm
+            </h2>
+
+
+            <button
+                id="closeConfirmModal"
+                class="close-button"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <p id="confirmMessage">
+                Are you sure?
+            </p>
+
+
+            <div class="modal-actions">
+
+                <button
+                    id="cancelConfirmButton"
+                    class="edit-button"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    id="confirmButton"
+                    class="delete-button"
+                    type="button"
+                >
+                    Confirm
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     PAGE LOADING
+========================================= -->
+
+<div
+    id="loadingOverlay"
+    class="loading-overlay hidden"
+>
+
+    <div class="loading-spinner"></div>
+
+</div>
+
+
+
+<!-- ========================================
+     JAVASCRIPT
+========================================= -->
+
+<script src="script.js"></script>
+
 
 </body>
 

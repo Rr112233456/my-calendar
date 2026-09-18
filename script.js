@@ -1,127 +1,55 @@
-// ========================================
-// DOM ELEMENTS
-// ========================================
+const calendarGrid = document.getElementById("calendarGrid");
+const monthTitle = document.getElementById("monthTitle");
+const prevMonthButton = document.getElementById("prevMonth");
+const nextMonthButton = document.getElementById("nextMonth");
+const todayButton = document.getElementById("todayButton");
+const newTaskButton = document.getElementById("newTaskButton");
+const searchButton = document.getElementById("searchButton");
+const searchBox = document.getElementById("searchBox");
+const searchInput = document.getElementById("searchInput");
 
-const calendarGrid =
-    document.getElementById("calendarGrid");
+const taskModal = document.getElementById("taskModal");
+const closeModal = document.getElementById("closeModal");
+const saveTaskButton = document.getElementById("saveTaskButton");
 
-const monthTitle =
-    document.getElementById("monthTitle");
+const taskDetailModal = document.getElementById("taskDetailModal");
+const closeDetailModal = document.getElementById("closeDetailModal");
+const editTaskButton = document.getElementById("editTaskButton");
+const deleteTaskButton = document.getElementById("deleteTaskButton");
+const completeTaskButton = document.getElementById("completeTaskButton");
 
-const prevMonthButton =
-    document.getElementById("prevMonth");
+const detailTaskName = document.getElementById("detailTaskName");
+const detailTaskCategory = document.getElementById("detailTaskCategory");
+const detailTaskDate = document.getElementById("detailTaskDate");
+const detailTaskStart = document.getElementById("detailTaskStart");
+const detailTaskEnd = document.getElementById("detailTaskEnd");
+const detailTaskLocation = document.getElementById("detailTaskLocation");
+const detailTaskDetails = document.getElementById("detailTaskDetails");
 
-const nextMonthButton =
-    document.getElementById("nextMonth");
-
-const todayButton =
-    document.getElementById("todayButton");
-
-const newTaskButton =
-    document.getElementById("newTaskButton");
-
-const searchButton =
-    document.getElementById("searchButton");
-
-const searchBox =
-    document.getElementById("searchBox");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const taskModal =
-    document.getElementById("taskModal");
-
-const closeModal =
-    document.getElementById("closeModal");
-
-const saveTaskButton =
-    document.getElementById("saveTaskButton");
-
-const taskDetailModal =
-    document.getElementById("taskDetailModal");
-
-const closeDetailModal =
-    document.getElementById("closeDetailModal");
-
-const editTaskButton =
-    document.getElementById("editTaskButton");
-
-const deleteTaskButton =
-    document.getElementById("deleteTaskButton");
-
-const completeTaskButton =
-    document.getElementById("completeTaskButton");
-
-const detailTaskName =
-    document.getElementById("detailTaskName");
-
-const detailTaskCategory =
-    document.getElementById("detailTaskCategory");
-
-const detailTaskDate =
-    document.getElementById("detailTaskDate");
-
-const detailTaskStart =
-    document.getElementById("detailTaskStart");
-
-const detailTaskEnd =
-    document.getElementById("detailTaskEnd");
-
-const detailTaskLocation =
-    document.getElementById("detailTaskLocation");
-
-const detailTaskDetails =
-    document.getElementById("detailTaskDetails");
-
-const upcomingTasks =
-    document.getElementById("upcomingTasks");
-
-const taskCount =
-    document.getElementById("taskCount");
-
-const totalTasks =
-    document.getElementById("totalTasks");
-
-const completedTasks =
-    document.getElementById("completedTasks");
-
-const upcomingTaskCount =
-    document.getElementById("upcomingTaskCount");
-
-
-// ========================================
-// STATE
-// ========================================
+const upcomingTasks = document.getElementById("upcomingTasks");
+const taskCount = document.getElementById("taskCount");
+const totalTasks = document.getElementById("totalTasks");
+const completedTasks = document.getElementById("completedTasks");
+const upcomingTaskCount = document.getElementById("upcomingTaskCount");
 
 let selectedTaskId = null;
-
 let editingTaskId = null;
 
+const DEFAULT_TASK_COLOR = "#eaf2ff";
+const DEFAULT_TEXT_COLOR = "#1f2937";
 
-// ========================================
-// DATE
-// ========================================
+let taskColorInput = null;
+let taskTextColorInput = null;
 
-const today =
-    new Date();
+const today = new Date();
 
-let currentMonth =
-    today.getMonth();
-
-let currentYear =
-    today.getFullYear();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
 
 const todayString =
     `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-
-// ========================================
-// MONTH NAMES
-// ========================================
-
 const monthNames = [
-
     "January",
     "February",
     "March",
@@ -134,113 +62,232 @@ const monthNames = [
     "October",
     "November",
     "December"
-
 ];
-
-
-// ========================================
-// TASK DATA
-// ========================================
 
 let tasks =
     JSON.parse(
         localStorage.getItem("myTasks")
     ) || [];
 
+function setupTaskColorPickers() {
 
-// ========================================
-// CROSS-DAY EVENT STYLE
-// ========================================
+    if (!saveTaskButton) {
+        return;
+    }
+
+    taskColorInput =
+        document.getElementById("taskColor");
+
+    taskTextColorInput =
+        document.getElementById("taskTextColor");
+
+    if (
+        taskColorInput &&
+        taskTextColorInput
+    ) {
+        return;
+    }
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.id =
+        "taskColorPickerWrapper";
+
+    wrapper.style.display =
+        "grid";
+
+    wrapper.style.gridTemplateColumns =
+        "1fr 1fr";
+
+    wrapper.style.gap =
+        "12px";
+
+    wrapper.style.marginTop =
+        "12px";
+
+    wrapper.style.marginBottom =
+        "12px";
+
+    const barGroup =
+        document.createElement("div");
+
+    const textGroup =
+        document.createElement("div");
+
+    const barLabel =
+        document.createElement("label");
+
+    const textLabel =
+        document.createElement("label");
+
+    barLabel.textContent =
+        "สีแถบงาน";
+
+    textLabel.textContent =
+        "สีตัวหนังสือ";
+
+    barLabel.style.display =
+        "block";
+
+    textLabel.style.display =
+        "block";
+
+    barLabel.style.marginBottom =
+        "6px";
+
+    textLabel.style.marginBottom =
+        "6px";
+
+    taskColorInput =
+        document.createElement("input");
+
+    taskTextColorInput =
+        document.createElement("input");
+
+    taskColorInput.type =
+        "color";
+
+    taskTextColorInput.type =
+        "color";
+
+    taskColorInput.id =
+        "taskColor";
+
+    taskTextColorInput.id =
+        "taskTextColor";
+
+    taskColorInput.value =
+        DEFAULT_TASK_COLOR;
+
+    taskTextColorInput.value =
+        DEFAULT_TEXT_COLOR;
+
+    taskColorInput.style.width =
+        "100%";
+
+    taskTextColorInput.style.width =
+        "100%";
+
+    taskColorInput.style.height =
+        "40px";
+
+    taskTextColorInput.style.height =
+        "40px";
+
+    taskColorInput.style.cursor =
+        "pointer";
+
+    taskTextColorInput.style.cursor =
+        "pointer";
+
+    barGroup.appendChild(
+        barLabel
+    );
+
+    barGroup.appendChild(
+        taskColorInput
+    );
+
+    textGroup.appendChild(
+        textLabel
+    );
+
+    textGroup.appendChild(
+        taskTextColorInput
+    );
+
+    wrapper.appendChild(
+        barGroup
+    );
+
+    wrapper.appendChild(
+        textGroup
+    );
+
+    saveTaskButton.parentNode.insertBefore(
+        wrapper,
+        saveTaskButton
+    );
+}
+
+function resetTaskColors() {
+
+    if (taskColorInput) {
+        taskColorInput.value =
+            DEFAULT_TASK_COLOR;
+    }
+
+    if (taskTextColorInput) {
+        taskTextColorInput.value =
+            DEFAULT_TEXT_COLOR;
+    }
+}
 
 const crossDayStyle =
     document.createElement("style");
 
 crossDayStyle.textContent = `
 
-    #calendarGrid {
-        position: relative;
-        column-gap: 0 !important;
-        row-gap: 0 !important;
-    }
+#calendarGrid {
+    position: relative;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
+}
 
-    #calendarGrid .day {
-        position: relative;
-        z-index: 1;
-        overflow: visible;
-        box-sizing: border-box;
-    }
+#calendarGrid .day {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    box-sizing: border-box;
+}
 
-    #calendarGrid .multi-day-event {
-        position: relative;
-        align-self: start;
-        min-width: 0;
-        height: 24px;
-        box-sizing: border-box;
+#calendarGrid .multi-day-event {
+    position: relative;
+    align-self: start;
+    min-width: 0;
+    height: 24px;
+    box-sizing: border-box;
+    padding: 3px 8px;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow:
+        0 1px 3px rgba(0,0,0,.12);
+}
 
-        padding: 3px 8px;
+#calendarGrid .multi-day-event-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
 
-        margin-left: 0;
-        margin-right: 0;
+#calendarGrid .multi-day-event-end {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+}
 
-        border-radius: 7px;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 6px;
-
-        cursor: pointer;
-
-        overflow: hidden;
-        white-space: nowrap;
-
-        color: #ffffff;
-
-        font-size: 12px;
-        font-weight: 600;
-
-        box-shadow:
-            0 1px 3px rgba(0,0,0,.12);
-
-    }
-
-    #calendarGrid .multi-day-event-label {
-
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-
-        min-width: 0;
-
-    }
-
-    #calendarGrid .multi-day-event-end {
-
-        flex-shrink: 0;
-
-        font-size: 11px;
-        font-weight: 700;
-
-    }
-
-    #calendarGrid .multi-day-event.completed {
-
-        text-decoration: line-through;
-        opacity: .6;
-
-    }
+#calendarGrid .multi-day-event.completed {
+    text-decoration: line-through;
+    opacity: .6;
+}
 
 `;
 
 document.head.appendChild(
     crossDayStyle
 );
-
-
-// ========================================
-// RENDER CALENDAR
-// ========================================
 
 function renderCalendar() {
 
@@ -258,14 +305,12 @@ function renderCalendar() {
     calendarGrid.style.gridTemplateColumns =
         "repeat(7, minmax(0, 1fr))";
 
-
     const firstDay =
         new Date(
             currentYear,
             currentMonth,
             1
         );
-
 
     const lastDay =
         new Date(
@@ -274,28 +319,19 @@ function renderCalendar() {
             0
         );
 
-
     const totalDays =
         lastDay.getDate();
 
-
     const startDay =
         firstDay.getDay();
-
 
     const totalWeeks =
         Math.ceil(
             (startDay + totalDays) / 7
         );
 
-
     monthTitle.textContent =
         `${monthNames[currentMonth]} ${currentYear}`;
-
-
-    // ====================================
-    // CREATE DAY CELLS
-    // ====================================
 
     for (
         let cellIndex = 0;
@@ -306,27 +342,18 @@ function renderCalendar() {
         const dayNumber =
             cellIndex - startDay + 1;
 
-
         const dayElement =
             document.createElement("div");
-
 
         dayElement.classList.add(
             "day"
         );
 
-
         dayElement.style.gridColumn =
             `${(cellIndex % 7) + 1}`;
 
-
         dayElement.style.gridRow =
             `${Math.floor(cellIndex / 7) + 1}`;
-
-
-        // =================================
-        // EMPTY CELL
-        // =================================
 
         if (
             dayNumber < 1 ||
@@ -342,61 +369,31 @@ function renderCalendar() {
             );
 
             continue;
-
         }
-
-
-        // =================================
-        // DATE
-        // =================================
 
         const dateString =
             `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(dayNumber).padStart(2, "0")}`;
 
-
-        // =================================
-        // DAY NUMBER
-        // =================================
-
         const number =
             document.createElement("span");
 
-
         number.textContent =
             dayNumber;
-
 
         dayElement.appendChild(
             number
         );
 
-
-        // =================================
-        // TODAY
-        // =================================
-
         if (
-
             dayNumber === today.getDate() &&
-
-            currentMonth ===
-                today.getMonth() &&
-
-            currentYear ===
-                today.getFullYear()
-
+            currentMonth === today.getMonth() &&
+            currentYear === today.getFullYear()
         ) {
 
             dayElement.classList.add(
                 "today"
             );
-
         }
-
-
-        // =================================
-        // CLICK DAY
-        // =================================
 
         dayElement.addEventListener(
             "click",
@@ -407,9 +404,7 @@ function renderCalendar() {
                         ".day.selected"
                     )
                     .forEach(
-                        function (
-                            selectedDay
-                        ) {
+                        function(selectedDay) {
 
                             selectedDay.classList.remove(
                                 "selected"
@@ -418,25 +413,16 @@ function renderCalendar() {
                         }
                     );
 
-
                 dayElement.classList.add(
                     "selected"
                 );
-
             }
         );
-
 
         calendarGrid.appendChild(
             dayElement
         );
-
     }
-
-
-    // ====================================
-    // CREATE MULTI-DAY TASK BARS
-    // ====================================
 
     const monthStart =
         new Date(
@@ -445,7 +431,6 @@ function renderCalendar() {
             1
         );
 
-
     const monthEnd =
         new Date(
             currentYear,
@@ -453,24 +438,20 @@ function renderCalendar() {
             totalDays
         );
 
-
     const segments = [];
 
-
     tasks.forEach(
-        function (task) {
+        function(task) {
 
             if (!task.date) {
                 return;
             }
-
 
             const startDate =
                 new Date(
                     task.date +
                     "T00:00:00"
                 );
-
 
             const endDate =
                 new Date(
@@ -479,55 +460,31 @@ function renderCalendar() {
                     "T00:00:00"
                 );
 
-
-            // =================================
-            // INVALID RANGE
-            // =================================
-
-            if (
-                endDate < startDate
-            ) {
-
+            if (endDate < startDate) {
                 return;
-
             }
-
-
-            // =================================
-            // NOT IN CURRENT MONTH
-            // =================================
 
             if (
                 endDate < monthStart ||
                 startDate > monthEnd
             ) {
-
                 return;
-
             }
-
 
             const visibleStart =
                 startDate > monthStart
                     ? startDate
                     : monthStart;
 
-
             const visibleEnd =
                 endDate < monthEnd
                     ? endDate
                     : monthEnd;
 
-
             let segmentStart =
                 new Date(
                     visibleStart
                 );
-
-
-            // =================================
-            // SPLIT AT WEEK BOUNDARIES
-            // =================================
 
             while (
                 segmentStart <=
@@ -543,40 +500,31 @@ function renderCalendar() {
                         86400000
                     );
 
-
                 const cellIndex =
                     startDay +
                     dayOffset;
-
 
                 const row =
                     Math.floor(
                         cellIndex / 7
                     ) + 1;
 
-
                 const startColumn =
-                    (
-                        cellIndex % 7
-                    ) + 1;
-
+                    (cellIndex % 7) + 1;
 
                 const daysUntilSaturday =
                     6 -
                     segmentStart.getDay();
-
 
                 let segmentEnd =
                     new Date(
                         segmentStart
                     );
 
-
                 segmentEnd.setDate(
                     segmentEnd.getDate() +
                     daysUntilSaturday
                 );
-
 
                 if (
                     segmentEnd >
@@ -587,9 +535,7 @@ function renderCalendar() {
                         new Date(
                             visibleEnd
                         );
-
                 }
-
 
                 const endDayOffset =
                     Math.floor(
@@ -600,17 +546,12 @@ function renderCalendar() {
                         86400000
                     );
 
-
                 const endCellIndex =
                     startDay +
                     endDayOffset;
 
-
                 const endColumn =
-                    (
-                        endCellIndex % 7
-                    ) + 1;
-
+                    (endCellIndex % 7) + 1;
 
                 segments.push({
 
@@ -636,33 +577,23 @@ function renderCalendar() {
 
                 });
 
-
                 segmentStart =
                     new Date(
                         segmentEnd
                     );
 
-
                 segmentStart.setDate(
                     segmentStart.getDate() +
                     1
                 );
-
             }
-
         }
     );
 
-
-    // ====================================
-    // FIND LANES
-    // ====================================
-
     const lanesByRow = {};
 
-
     segments.forEach(
-        function (segment) {
+        function(segment) {
 
             if (
                 !lanesByRow[
@@ -673,12 +604,9 @@ function renderCalendar() {
                 lanesByRow[
                     segment.row
                 ] = [];
-
             }
 
-
             let lane = 0;
-
 
             while (true) {
 
@@ -686,67 +614,50 @@ function renderCalendar() {
                     lanesByRow[
                         segment.row
                     ].some(
-                        function (existing) {
+                        function(existing) {
 
                             return (
-
                                 existing.lane ===
                                     lane &&
-
                                 !(
                                     segment.endColumn <=
                                         existing.startColumn ||
-
                                     segment.startColumn >=
                                         existing.endColumn
                                 )
-
                             );
 
                         }
                     );
 
-
                 if (!overlap) {
                     break;
                 }
 
-
                 lane++;
-
             }
-
 
             segment.lane =
                 lane;
-
 
             lanesByRow[
                 segment.row
             ].push(
                 segment
             );
-
         }
     );
 
-
-    // ====================================
-    // DRAW TASK BARS
-    // ====================================
-
     segments.forEach(
-        function (segment) {
+        function(segment) {
 
             const task =
                 segment.task;
-
 
             const event =
                 document.createElement(
                     "div"
                 );
-
 
             event.classList.add(
                 "event",
@@ -756,49 +667,40 @@ function renderCalendar() {
                 )
             );
 
-
-            if (
-                task.completed
-            ) {
+            if (task.completed) {
 
                 event.classList.add(
                     "completed"
                 );
-
             }
-
 
             event.style.gridColumn =
                 `${segment.startColumn} / ${segment.endColumn}`;
 
-
             event.style.gridRow =
                 `${segment.row}`;
-
 
             event.style.zIndex =
                 `${20 + segment.lane}`;
 
-
             event.style.marginTop =
-                `${34 + (
-                    segment.lane * 28
-                )}px`;
+                `${34 + (segment.lane * 28)}px`;
 
+            event.style.backgroundColor =
+                task.color ||
+                DEFAULT_TASK_COLOR;
 
-            // =================================
-            // LABEL
-            // =================================
+            event.style.color =
+                task.textColor ||
+                DEFAULT_TEXT_COLOR;
 
             const label =
                 document.createElement(
                     "span"
                 );
 
-
             label.className =
                 "multi-day-event-label";
-
 
             const taskStartsHere =
                 segment.startDate.getTime() ===
@@ -807,10 +709,7 @@ function renderCalendar() {
                     "T00:00:00"
                 ).getTime();
 
-
-            if (
-                taskStartsHere
-            ) {
+            if (taskStartsHere) {
 
                 label.textContent =
                     task.start
@@ -821,18 +720,11 @@ function renderCalendar() {
 
                 label.textContent =
                     task.name;
-
             }
-
 
             event.appendChild(
                 label
             );
-
-
-            // =================================
-            // END TIME
-            // =================================
 
             const taskEndDate =
                 new Date(
@@ -841,11 +733,9 @@ function renderCalendar() {
                     "T00:00:00"
                 );
 
-
             const endsHere =
                 segment.endDate.getTime() ===
                 taskEndDate.getTime();
-
 
             if (
                 endsHere &&
@@ -857,69 +747,48 @@ function renderCalendar() {
                         "span"
                     );
 
-
                 endTime.className =
                     "multi-day-event-end";
-
 
                 endTime.textContent =
                     task.end;
 
-
                 event.appendChild(
                     endTime
                 );
-
             }
-
-
-            // =================================
-            // CLICK
-            // =================================
 
             event.addEventListener(
                 "click",
-                function (e) {
+                function(e) {
 
                     e.stopPropagation();
 
                     openTaskDetail(
                         task
                     );
-
                 }
             );
-
 
             calendarGrid.appendChild(
                 event
             );
-
         }
     );
 
-
-    // ====================================
-    // SIDEBAR
-    // ====================================
-
     renderUpcomingTasks();
-
 
     taskCount.textContent =
         tasks.length;
 
-
     totalTasks.textContent =
         tasks.length;
-
 
     completedTasks.textContent =
         tasks.filter(
             task =>
                 task.completed
         ).length;
-
 
     upcomingTaskCount.textContent =
         tasks.filter(
@@ -930,128 +799,60 @@ function renderCalendar() {
                 ) >= todayString &&
                 !task.completed
         ).length;
-
 }
 
+function getCategoryClass(category) {
 
-// ========================================
-// CATEGORY COLOR
-// ========================================
-
-function getCategoryClass(
-    category
-) {
-
-    if (
-        category === "video"
-    ) {
-
+    if (category === "video") {
         return "blue";
-
     }
 
-
-    if (
-        category === "design"
-    ) {
-
+    if (category === "design") {
         return "green";
-
     }
 
-
-    if (
-        category === "website"
-    ) {
-
+    if (category === "website") {
         return "purple";
-
     }
-
 
     return "blue";
-
 }
 
+function getCategoryIcon(category) {
 
-// ========================================
-// CATEGORY ICON
-// ========================================
-
-function getCategoryIcon(
-    category
-) {
-
-    if (
-        category === "video"
-    ) {
-
+    if (category === "video") {
         return "🎥";
-
     }
 
-
-    if (
-        category === "design"
-    ) {
-
+    if (category === "design") {
         return "🎨";
-
     }
 
-
-    if (
-        category === "website"
-    ) {
-
+    if (category === "website") {
         return "💻";
-
     }
-
 
     return "📋";
-
 }
 
-
-// ========================================
-// TASK TIME
-// ========================================
-
-function taskStartText(
-    task
-) {
+function taskStartText(task) {
 
     if (!task.start) {
-
         return "";
-
     }
-
 
     return task.end
         ? `${task.start} - ${task.end} ·`
         : `${task.start} ·`;
-
 }
-
-
-// ========================================
-// UPCOMING TASKS
-// ========================================
 
 function renderUpcomingTasks() {
 
     if (!upcomingTasks) {
-
         return;
-
     }
 
-
-    upcomingTasks.innerHTML =
-        "";
-
+    upcomingTasks.innerHTML = "";
 
     const upcoming =
         tasks
@@ -1063,7 +864,7 @@ function renderUpcomingTasks() {
                     ) >= todayString
             )
             .sort(
-                function (a, b) {
+                function(a, b) {
 
                     const dateA =
                         `${a.date} ${a.start || "23:59"}`;
@@ -1074,7 +875,6 @@ function renderUpcomingTasks() {
                     return dateA.localeCompare(
                         dateB
                     );
-
                 }
             )
             .slice(
@@ -1082,10 +882,7 @@ function renderUpcomingTasks() {
                 5
             );
 
-
-    if (
-        upcoming.length === 0
-    ) {
+    if (upcoming.length === 0) {
 
         upcomingTasks.innerHTML = `
             <div class="no-upcoming">
@@ -1094,29 +891,24 @@ function renderUpcomingTasks() {
         `;
 
         return;
-
     }
 
-
     upcoming.forEach(
-        function (task) {
+        function(task) {
 
             const taskElement =
                 document.createElement(
                     "div"
                 );
 
-
             taskElement.classList.add(
                 "task"
             );
-
 
             const icon =
                 document.createElement(
                     "div"
                 );
-
 
             icon.classList.add(
                 "task-icon",
@@ -1125,39 +917,32 @@ function renderUpcomingTasks() {
                 )
             );
 
-
             icon.textContent =
                 getCategoryIcon(
                     task.category
                 );
-
 
             const info =
                 document.createElement(
                     "div"
                 );
 
-
             info.classList.add(
                 "task-info"
             );
-
 
             const title =
                 document.createElement(
                     "h4"
                 );
 
-
             title.textContent =
                 task.name;
-
 
             const time =
                 document.createElement(
                     "p"
                 );
-
 
             const endDateText =
                 task.endDate &&
@@ -1166,64 +951,46 @@ function renderUpcomingTasks() {
                     ? ` → ${formatUpcomingDate(task.endDate)}`
                     : "";
 
-
             time.textContent =
                 `${formatUpcomingDate(task.date)}${endDateText} · ${task.start || "--:--"}${task.end ? ` - ${task.end}` : ""}`;
-
 
             info.appendChild(
                 title
             );
 
-
             info.appendChild(
                 time
             );
-
 
             taskElement.appendChild(
                 icon
             );
 
-
             taskElement.appendChild(
                 info
             );
 
-
             taskElement.addEventListener(
                 "click",
-                function () {
+                function() {
 
                     openTaskDetail(
                         task
                     );
-
                 }
             );
-
 
             upcomingTasks.appendChild(
                 taskElement
             );
-
         }
     );
-
 }
 
-
-// ========================================
-// FORMAT UPCOMING DATE
-// ========================================
-
-function formatUpcomingDate(
-    dateString
-) {
+function formatUpcomingDate(dateString) {
 
     const currentTodayString =
         `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
 
     if (
         dateString ===
@@ -1231,16 +998,13 @@ function formatUpcomingDate(
     ) {
 
         return "Today";
-
     }
-
 
     const date =
         new Date(
             dateString +
             "T00:00:00"
         );
-
 
     return date.toLocaleDateString(
         "en-GB",
@@ -1249,47 +1013,34 @@ function formatUpcomingDate(
             month: "short"
         }
     );
-
 }
-
-
-// ========================================
-// NEW TASK
-// ========================================
 
 newTaskButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         editingTaskId =
             null;
 
+        resetTaskColors();
 
         taskModal.style.display =
             "flex";
-
     }
 );
-
-
-// ========================================
-// CLOSE MODAL
-// ========================================
 
 closeModal.addEventListener(
     "click",
-    function () {
+    function() {
 
         taskModal.style.display =
             "none";
-
     }
 );
 
-
 taskModal.addEventListener(
     "click",
-    function (event) {
+    function(event) {
 
         if (
             event.target ===
@@ -1298,20 +1049,13 @@ taskModal.addEventListener(
 
             taskModal.style.display =
                 "none";
-
         }
-
     }
 );
 
-
-// ========================================
-// SAVE / UPDATE TASK
-// ========================================
-
 saveTaskButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         const taskName =
             document
@@ -1321,14 +1065,12 @@ saveTaskButton.addEventListener(
                 .value
                 .trim();
 
-
         const taskDate =
             document
                 .getElementById(
                     "taskDate"
                 )
                 .value;
-
 
         const taskEndDate =
             document
@@ -1337,14 +1079,12 @@ saveTaskButton.addEventListener(
                 )
                 .value;
 
-
         const taskCategory =
             document
                 .getElementById(
                     "taskCategory"
                 )
                 .value;
-
 
         const taskStart =
             document
@@ -1353,14 +1093,12 @@ saveTaskButton.addEventListener(
                 )
                 .value;
 
-
         const taskEnd =
             document
                 .getElementById(
                     "taskEnd"
                 )
                 .value;
-
 
         const taskLocation =
             document
@@ -1370,7 +1108,6 @@ saveTaskButton.addEventListener(
                 .value
                 .trim();
 
-
         const taskDetails =
             document
                 .getElementById(
@@ -1379,10 +1116,15 @@ saveTaskButton.addEventListener(
                 .value
                 .trim();
 
+        const taskColor =
+            taskColorInput
+                ? taskColorInput.value
+                : DEFAULT_TASK_COLOR;
 
-        // =================================
-        // REQUIRED
-        // =================================
+        const taskTextColor =
+            taskTextColorInput
+                ? taskTextColorInput.value
+                : DEFAULT_TEXT_COLOR;
 
         if (
             !taskName ||
@@ -1394,18 +1136,11 @@ saveTaskButton.addEventListener(
             );
 
             return;
-
         }
-
-
-        // =================================
-        // END DATE
-        // =================================
 
         const finalEndDate =
             taskEndDate ||
             taskDate;
-
 
         if (
             finalEndDate <
@@ -1417,21 +1152,12 @@ saveTaskButton.addEventListener(
             );
 
             return;
-
         }
-
-
-        // =================================
-        // EDIT / NEW
-        // =================================
 
         const isEditing =
             editingTaskId !== null;
 
-
-        if (
-            isEditing
-        ) {
+        if (isEditing) {
 
             const taskIndex =
                 tasks.findIndex(
@@ -1440,13 +1166,9 @@ saveTaskButton.addEventListener(
                         editingTaskId
                 );
 
-
-            if (
-                taskIndex !== -1
-            ) {
+            if (taskIndex !== -1) {
 
                 tasks[taskIndex] = {
-
                     ...tasks[taskIndex],
 
                     name:
@@ -1471,12 +1193,15 @@ saveTaskButton.addEventListener(
                         taskLocation,
 
                     details:
-                        taskDetails
+                        taskDetails,
 
+                    color:
+                        taskColor,
+
+                    textColor:
+                        taskTextColor
                 };
-
             }
-
 
             editingTaskId =
                 null;
@@ -1510,21 +1235,19 @@ saveTaskButton.addEventListener(
                     taskLocation,
 
                 details:
-                    taskDetails
+                    taskDetails,
 
+                color:
+                    taskColor,
+
+                textColor:
+                    taskTextColor
             };
-
 
             tasks.push(
                 newTask
             );
-
         }
-
-
-        // =================================
-        // LOCAL STORAGE
-        // =================================
 
         localStorage.setItem(
             "myTasks",
@@ -1533,64 +1256,42 @@ saveTaskButton.addEventListener(
             )
         );
 
-
-        // =================================
-        // RENDER
-        // =================================
-
         renderCalendar();
-
-
-        // =================================
-        // CLOSE
-        // =================================
 
         taskModal.style.display =
             "none";
-
-
-        // =================================
-        // CLEAR FORM
-        // =================================
 
         document.getElementById(
             "taskName"
         ).value = "";
 
-
         document.getElementById(
             "taskDate"
         ).value = "";
-
 
         document.getElementById(
             "taskEndDate"
         ).value = "";
 
-
         document.getElementById(
             "taskStart"
         ).value = "";
-
 
         document.getElementById(
             "taskEnd"
         ).value = "";
 
-
         document.getElementById(
             "taskLocation"
         ).value = "";
-
 
         document.getElementById(
             "taskDetails"
         ).value = "";
 
+        resetTaskColors();
 
-        if (
-            isEditing
-        ) {
+        if (isEditing) {
 
             alert(
                 "แก้ไขงานเรียบร้อยแล้ว ✅"
@@ -1601,70 +1302,52 @@ saveTaskButton.addEventListener(
             alert(
                 "เพิ่มงานเรียบร้อยแล้ว ✅"
             );
-
         }
-
     }
 );
-
-
 // ========================================
 // MONTH NAVIGATION
 // ========================================
 
 prevMonthButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         currentMonth--;
 
+        if (currentMonth < 0) {
 
-        if (
-            currentMonth < 0
-        ) {
-
-            currentMonth =
-                11;
-
+            currentMonth = 11;
             currentYear--;
 
         }
 
-
         renderCalendar();
-
     }
 );
 
 
 nextMonthButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         currentMonth++;
 
+        if (currentMonth > 11) {
 
-        if (
-            currentMonth > 11
-        ) {
-
-            currentMonth =
-                0;
-
+            currentMonth = 0;
             currentYear++;
 
         }
 
-
         renderCalendar();
-
     }
 );
 
 
 todayButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         currentMonth =
             today.getMonth();
@@ -1672,9 +1355,7 @@ todayButton.addEventListener(
         currentYear =
             today.getFullYear();
 
-
         renderCalendar();
-
     }
 );
 
@@ -1683,26 +1364,20 @@ todayButton.addEventListener(
 // TASK DETAIL
 // ========================================
 
-function openTaskDetail(
-    task
-) {
+function openTaskDetail(task) {
 
     selectedTaskId =
         task.id;
 
-
     detailTaskName.textContent =
         task.name;
-
 
     detailTaskCategory.textContent =
         task.category;
 
-
     detailTaskDate.textContent =
         task.endDate &&
-        task.endDate !==
-            task.date
+        task.endDate !== task.date
 
             ? `${formatTaskDate(task.date)} - ${formatTaskDate(task.endDate)}`
 
@@ -1710,35 +1385,26 @@ function openTaskDetail(
                 task.date
             );
 
-
     detailTaskStart.textContent =
         task.start ||
         "ไม่ได้ระบุ";
-
 
     detailTaskEnd.textContent =
         task.end ||
         "ไม่ได้ระบุ";
 
-
     detailTaskLocation.textContent =
         task.location ||
         "ไม่ได้ระบุ";
-
 
     detailTaskDetails.textContent =
         task.details ||
         "ไม่มีรายละเอียดเพิ่มเติม";
 
-
-    updateCompleteButton(
-        task
-    );
-
+    updateCompleteButton(task);
 
     taskDetailModal.style.display =
         "flex";
-
 }
 
 
@@ -1746,16 +1412,13 @@ function openTaskDetail(
 // FORMAT TASK DATE
 // ========================================
 
-function formatTaskDate(
-    dateString
-) {
+function formatTaskDate(dateString) {
 
     const date =
         new Date(
             dateString +
             "T00:00:00"
         );
-
 
     return date.toLocaleDateString(
         "en-GB",
@@ -1765,7 +1428,6 @@ function formatTaskDate(
             year: "numeric"
         }
     );
-
 }
 
 
@@ -1775,7 +1437,7 @@ function formatTaskDate(
 
 closeDetailModal.addEventListener(
     "click",
-    function () {
+    function() {
 
         taskDetailModal.style.display =
             "none";
@@ -1786,7 +1448,7 @@ closeDetailModal.addEventListener(
 
 taskDetailModal.addEventListener(
     "click",
-    function (event) {
+    function(event) {
 
         if (
             event.target ===
@@ -1808,7 +1470,7 @@ taskDetailModal.addEventListener(
 
 editTaskButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         const task =
             tasks.find(
@@ -1817,29 +1479,22 @@ editTaskButton.addEventListener(
                     selectedTaskId
             );
 
-
         if (!task) {
-
             return;
-
         }
-
 
         editingTaskId =
             task.id;
-
 
         document.getElementById(
             "taskName"
         ).value =
             task.name;
 
-
         document.getElementById(
             "taskDate"
         ).value =
             task.date;
-
 
         document.getElementById(
             "taskEndDate"
@@ -1847,13 +1502,11 @@ editTaskButton.addEventListener(
             task.endDate ||
             task.date;
 
-
         document.getElementById(
             "taskStart"
         ).value =
             task.start ||
             "";
-
 
         document.getElementById(
             "taskEnd"
@@ -1861,12 +1514,10 @@ editTaskButton.addEventListener(
             task.end ||
             "";
 
-
         document.getElementById(
             "taskCategory"
         ).value =
             task.category;
-
 
         document.getElementById(
             "taskLocation"
@@ -1874,21 +1525,34 @@ editTaskButton.addEventListener(
             task.location ||
             "";
 
-
         document.getElementById(
             "taskDetails"
         ).value =
             task.details ||
             "";
 
+        // โหลดสีเดิมกลับมา
+        if (taskColorInput) {
+
+            taskColorInput.value =
+                task.color ||
+                DEFAULT_TASK_COLOR;
+
+        }
+
+        if (taskTextColorInput) {
+
+            taskTextColorInput.value =
+                task.textColor ||
+                DEFAULT_TEXT_COLOR;
+
+        }
 
         taskDetailModal.style.display =
             "none";
 
-
         taskModal.style.display =
             "flex";
-
     }
 );
 
@@ -1899,22 +1563,16 @@ editTaskButton.addEventListener(
 
 deleteTaskButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         const confirmDelete =
             confirm(
                 "ต้องการลบงานนี้ใช่ไหม?"
             );
 
-
-        if (
-            !confirmDelete
-        ) {
-
+        if (!confirmDelete) {
             return;
-
         }
-
 
         tasks =
             tasks.filter(
@@ -1923,7 +1581,6 @@ deleteTaskButton.addEventListener(
                     selectedTaskId
             );
 
-
         localStorage.setItem(
             "myTasks",
             JSON.stringify(
@@ -1931,26 +1588,24 @@ deleteTaskButton.addEventListener(
             )
         );
 
-
         taskDetailModal.style.display =
             "none";
 
-
         renderCalendar();
-
 
         selectedTaskId =
             null;
-
     }
 );
+
+
 // ========================================
 // SEARCH
 // ========================================
 
 searchButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         if (!searchBox) {
             return;
@@ -1967,9 +1622,7 @@ searchButton.addEventListener(
         ) {
 
             searchInput.focus();
-
         }
-
     }
 );
 
@@ -1978,35 +1631,26 @@ if (searchInput) {
 
     searchInput.addEventListener(
         "input",
-        function () {
+        function() {
 
             const keyword =
                 searchInput.value
                     .trim()
                     .toLowerCase();
 
-
-            // ไม่มีคำค้น
             if (!keyword) {
 
                 renderCalendar();
 
                 return;
-
             }
-
-
-            // =================================
-            // FILTER TASKS
-            // =================================
 
             const originalTasks =
                 tasks;
 
-
             const filteredTasks =
                 originalTasks.filter(
-                    function (task) {
+                    function(task) {
 
                         return (
 
@@ -2035,28 +1679,18 @@ if (searchInput) {
                                 )
 
                         );
-
                     }
                 );
-
-
-            // =================================
-            // TEMPORARY RENDER
-            // =================================
 
             tasks =
                 filteredTasks;
 
-
             renderCalendar();
-
 
             tasks =
                 originalTasks;
-
         }
     );
-
 }
 
 
@@ -2066,11 +1700,11 @@ if (searchInput) {
 
 completeTaskButton.addEventListener(
     "click",
-    function () {
+    function() {
 
         const task =
             tasks.find(
-                function (task) {
+                function(task) {
 
                     return (
                         task.id ===
@@ -2080,17 +1714,12 @@ completeTaskButton.addEventListener(
                 }
             );
 
-
         if (!task) {
-
             return;
-
         }
-
 
         task.completed =
             !task.completed;
-
 
         localStorage.setItem(
             "myTasks",
@@ -2099,18 +1728,13 @@ completeTaskButton.addEventListener(
             )
         );
 
-
         updateCompleteButton(
             task
         );
 
-
         renderCalendar();
 
-
-        if (
-            task.completed
-        ) {
+        if (task.completed) {
 
             alert(
                 "ทำงานเสร็จแล้ว ✅"
@@ -2121,9 +1745,7 @@ completeTaskButton.addEventListener(
             alert(
                 "ยกเลิกสถานะเสร็จแล้ว"
             );
-
         }
-
     }
 );
 
@@ -2132,20 +1754,13 @@ completeTaskButton.addEventListener(
 // COMPLETE BUTTON TEXT
 // ========================================
 
-function updateCompleteButton(
-    task
-) {
+function updateCompleteButton(task) {
 
     if (!completeTaskButton) {
-
         return;
-
     }
 
-
-    if (
-        task.completed
-    ) {
+    if (task.completed) {
 
         completeTaskButton.textContent =
             "↩️ Mark Incomplete";
@@ -2162,9 +1777,7 @@ function updateCompleteButton(
         completeTaskButton.classList.remove(
             "completed"
         );
-
     }
-
 }
 
 
@@ -2181,11 +1794,8 @@ const themeButton =
 function updateThemeIcon() {
 
     if (!themeButton) {
-
         return;
-
     }
-
 
     if (
         document.body.classList.contains(
@@ -2200,9 +1810,7 @@ function updateThemeIcon() {
 
         themeButton.textContent =
             "☀️";
-
     }
-
 }
 
 
@@ -2220,7 +1828,6 @@ if (
     document.body.classList.add(
         "dark-mode"
     );
-
 }
 
 
@@ -2231,18 +1838,16 @@ if (themeButton) {
 
     themeButton.addEventListener(
         "click",
-        function () {
+        function() {
 
             document.body.classList.toggle(
                 "dark-mode"
             );
 
-
             const isDark =
                 document.body.classList.contains(
                     "dark-mode"
                 );
-
 
             localStorage.setItem(
                 "calendarTheme",
@@ -2251,12 +1856,9 @@ if (themeButton) {
                     : "light"
             );
 
-
             updateThemeIcon();
-
         }
     );
-
 }
 
 
@@ -2266,7 +1868,7 @@ if (themeButton) {
 
 document.addEventListener(
     "keydown",
-    function (event) {
+    function(event) {
 
         if (
             event.key !==
@@ -2274,9 +1876,7 @@ document.addEventListener(
         ) {
 
             return;
-
         }
-
 
         if (
             taskModal &&
@@ -2286,9 +1886,7 @@ document.addEventListener(
 
             taskModal.style.display =
                 "none";
-
         }
-
 
         if (
             taskDetailModal &&
@@ -2298,9 +1896,7 @@ document.addEventListener(
 
             taskDetailModal.style.display =
                 "none";
-
         }
-
     }
 );
 
@@ -2311,7 +1907,7 @@ document.addEventListener(
 
 document.addEventListener(
     "click",
-    function (event) {
+    function(event) {
 
         if (
             !searchBox ||
@@ -2319,28 +1915,21 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
-
         if (
-
             !searchBox.contains(
                 event.target
             ) &&
-
             !searchButton.contains(
                 event.target
             )
-
         ) {
 
             searchBox.classList.remove(
                 "active"
             );
-
         }
-
     }
 );
 
@@ -2359,24 +1948,19 @@ if (
     ) {
 
         setTimeout(
-            function () {
+            function() {
 
                 Notification.requestPermission()
                     .catch(
-                        function () {
-
-                            // Browser อาจบล็อก
-                            // permission request
-
+                        function() {
+                            // Browser อาจบล็อก permission
                         }
                     );
 
             },
             1500
         );
-
     }
-
 }
 
 
@@ -2384,25 +1968,16 @@ if (
 // SHOW NOTIFICATION
 // ========================================
 
-function showNotification(
-    task
-) {
+function showNotification(task) {
 
     if (
-
-        !(
-            "Notification" in window
-        ) ||
-
+        !("Notification" in window) ||
         Notification.permission !==
             "granted"
-
     ) {
 
         return;
-
     }
-
 
     new Notification(
         "Task Reminder 🔔",
@@ -2411,7 +1986,6 @@ function showNotification(
                 task.name
         }
     );
-
 }
 
 
@@ -2426,9 +2000,7 @@ function checkTaskNotifications() {
     ) {
 
         return;
-
     }
-
 
     if (
         Notification.permission !==
@@ -2436,33 +2008,23 @@ function checkTaskNotifications() {
     ) {
 
         return;
-
     }
-
 
     const now =
         new Date();
 
-
     const currentDate =
         `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-
 
     const currentTime =
         `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-
     tasks.forEach(
-        function (task) {
+        function(task) {
 
-            if (
-                task.completed
-            ) {
-
+            if (task.completed) {
                 return;
-
             }
-
 
             if (
                 task.date !==
@@ -2470,18 +2032,11 @@ function checkTaskNotifications() {
             ) {
 
                 return;
-
             }
 
-
-            if (
-                !task.start
-            ) {
-
+            if (!task.start) {
                 return;
-
             }
-
 
             if (
                 task.start !==
@@ -2489,30 +2044,20 @@ function checkTaskNotifications() {
             ) {
 
                 return;
-
             }
 
-
-            if (
-                task.notified
-            ) {
-
+            if (task.notified) {
                 return;
-
             }
-
 
             showNotification(
                 task
             );
 
-
             task.notified =
                 true;
-
         }
     );
-
 
     localStorage.setItem(
         "myTasks",
@@ -2520,7 +2065,6 @@ function checkTaskNotifications() {
             tasks
         )
     );
-
 }
 
 
@@ -2533,31 +2077,18 @@ setInterval(
     60000
 );
 
-
-// เช็กทันทีตอนเปิดเว็บ
 checkTaskNotifications();
-
-
-// ========================================
-// INITIAL RENDER
-// ========================================
-
-renderCalendar();
 
 
 // ========================================
 // FIX OLD TASK DATA
 // ========================================
 
-// งานเก่าที่สร้างก่อนมี End Date
-// จะถือว่าสิ้นสุดวันเดียวกับ Start Date
-
 let changedOldTask =
     false;
 
-
 tasks.forEach(
-    function (task) {
+    function(task) {
 
         if (
             !task.endDate &&
@@ -2569,16 +2100,31 @@ tasks.forEach(
 
             changedOldTask =
                 true;
-
         }
 
+        // งานเก่าที่ไม่มีสี
+        if (!task.color) {
+
+            task.color =
+                DEFAULT_TASK_COLOR;
+
+            changedOldTask =
+                true;
+        }
+
+        if (!task.textColor) {
+
+            task.textColor =
+                DEFAULT_TEXT_COLOR;
+
+            changedOldTask =
+                true;
+        }
     }
 );
 
 
-if (
-    changedOldTask
-) {
+if (changedOldTask) {
 
     localStorage.setItem(
         "myTasks",
@@ -2586,10 +2132,6 @@ if (
             tasks
         )
     );
-
-
-    renderCalendar();
-
 }
 
 
@@ -2615,7 +2157,7 @@ if (
 
     taskDateInput.addEventListener(
         "change",
-        function () {
+        function() {
 
             if (
                 !taskEndDateInput.value
@@ -2623,10 +2165,33 @@ if (
 
                 taskEndDateInput.value =
                     taskDateInput.value;
-
             }
-
         }
     );
-
 }
+
+
+// ========================================
+// START
+// ========================================
+
+function setupTaskColorPickers() {
+
+    taskColorInput =
+        document.getElementById("taskColor");
+
+    taskTextColorInput =
+        document.getElementById("taskTextColor");
+
+    if (taskColorInput) {
+        taskColorInput.value =
+            DEFAULT_TASK_COLOR;
+    }
+
+    if (taskTextColorInput) {
+        taskTextColorInput.value =
+            DEFAULT_TEXT_COLOR;
+    }
+}
+
+renderCalendar();
