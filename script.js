@@ -51,6 +51,9 @@ const detailTaskDate =
 const detailTaskStart =
     document.getElementById("detailTaskStart");
 
+const detailTaskEnd =
+    document.getElementById("detailTaskEnd");
+
 const detailTaskLocation =
     document.getElementById("detailTaskLocation");
 
@@ -319,17 +322,17 @@ function renderCalendar() {
     taskCount.textContent = tasks.length;
 
     totalTasks.textContent =
-    tasks.length;
+        tasks.length;
 
-completedTasks.textContent =
-    tasks.filter(task => task.completed).length;
+    completedTasks.textContent =
+        tasks.filter(task => task.completed).length;
 
-upcomingTaskCount.textContent =
-    tasks.filter(
-        task =>
-            task.date >= todayString &&
-            !task.completed
-    ).length;
+    upcomingTaskCount.textContent =
+        tasks.filter(
+            task =>
+                task.date >= todayString &&
+                !task.completed
+        ).length;
 
 }
 
@@ -390,7 +393,9 @@ function taskStartText(task) {
         return "";
     }
 
-    return `${task.start} ·`;
+    return task.end
+        ? `${task.start} - ${task.end} ·`
+        : `${task.start} ·`;
 
 }
 
@@ -505,12 +510,13 @@ function renderUpcomingTasks() {
 
 
         // DATE + TIME
+        // แก้ตรงนี้แล้ว: ต้องสร้าง element ก่อน
 
         const time =
             document.createElement("p");
 
         time.textContent =
-            `${formatUpcomingDate(task.date)} · ${task.start || "--:--"}`;
+            `${formatUpcomingDate(task.date)} · ${task.start || "--:--"}${task.end ? ` - ${task.end}` : ""}`;
 
 
         info.appendChild(title);
@@ -659,6 +665,11 @@ saveTaskButton.addEventListener(
                 .getElementById("taskStart")
                 .value;
 
+        const taskEnd =
+            document
+                .getElementById("taskEnd")
+                .value;
+
 
         const taskLocation =
             document
@@ -688,8 +699,7 @@ saveTaskButton.addEventListener(
             );
 
             return;
-
-        }
+                    }
 
 
         // จำไว้ว่ากำลังแก้ไขหรือสร้างใหม่
@@ -725,6 +735,8 @@ saveTaskButton.addEventListener(
 
                     start: taskStart,
 
+                    end: taskEnd,
+
                     location: taskLocation,
 
                     details: taskDetails
@@ -756,6 +768,8 @@ saveTaskButton.addEventListener(
                 category: taskCategory,
 
                 start: taskStart,
+
+                end: taskEnd,
 
                 location: taskLocation,
 
@@ -808,6 +822,10 @@ saveTaskButton.addEventListener(
 
         document.getElementById(
             "taskStart"
+        ).value = "";
+
+        document.getElementById(
+            "taskEnd"
         ).value = "";
 
         document.getElementById(
@@ -945,6 +963,11 @@ function openTaskDetail(task) {
         "ไม่ได้ระบุ";
 
 
+    detailTaskEnd.textContent =
+        task.end ||
+        "ไม่ได้ระบุ";
+
+
     detailTaskLocation.textContent =
         task.location ||
         "ไม่ได้ระบุ";
@@ -953,7 +976,9 @@ function openTaskDetail(task) {
     detailTaskDetails.textContent =
         task.details ||
         "ไม่มีรายละเอียดเพิ่มเติม";
-        updateCompleteButton(task);
+
+
+    updateCompleteButton(task);
 
 
     taskDetailModal.style.display =
@@ -1068,6 +1093,12 @@ editTaskButton.addEventListener(
 
 
         document.getElementById(
+            "taskEnd"
+        ).value =
+            task.end || "";
+
+
+        document.getElementById(
             "taskCategory"
         ).value =
             task.category;
@@ -1146,6 +1177,7 @@ deleteTaskButton.addEventListener(
     }
 );
 
+
 // ========================================
 // SEARCH BOX
 // ========================================
@@ -1168,6 +1200,7 @@ searchButton.addEventListener(
 
     }
 );
+
 
 // ========================================
 // SEARCH TASKS
@@ -1231,23 +1264,28 @@ completeTaskButton.addEventListener(
         }
 
         // เปลี่ยนสถานะงาน
+
         task.completed =
             !task.completed;
 
         // บันทึกข้อมูล
+
         localStorage.setItem(
             "myTasks",
             JSON.stringify(tasks)
         );
 
         // อัปเดตหน้าเว็บ
+
         renderCalendar();
 
         // อัปเดตปุ่ม
+
         updateCompleteButton(task);
 
     }
 );
+
 
 function updateCompleteButton(task) {
 
@@ -1273,22 +1311,30 @@ function updateCompleteButton(task) {
 
 }
 
+
 // ========================================
 // START
 // ========================================
 
 renderCalendar();
 
+
 const themeButton =
     document.getElementById("themeButton");
+
 
 const savedTheme =
     localStorage.getItem("theme");
 
+
 if (savedTheme === "dark") {
+
     document.body.classList.add("dark-mode");
+
     themeButton.textContent = "🌙";
+
 }
+
 
 themeButton.addEventListener(
     "click",
@@ -1297,6 +1343,7 @@ themeButton.addEventListener(
         document.body.classList.toggle(
             "dark-mode"
         );
+
 
         if (
             document.body.classList.contains(
@@ -1319,31 +1366,70 @@ themeButton.addEventListener(
                 "theme",
                 "light"
             );
+
         }
+
     }
 );
 
+
+// ========================================
+// NOTIFICATION
+// ========================================
+
 if ("Notification" in window) {
+
     Notification.requestPermission();
+
 }
+
+
+function showNotification(task) {
+
+    if (
+        "Notification" in window &&
+        Notification.permission === "granted"
+    ) {
+
+        new Notification(
+            "Task Reminder 🔔",
+            {
+                body: task.name
+            }
+        );
+
+    }
+
+}
+
+
+// ========================================
+// CHECK TASK NOTIFICATIONS
+// ========================================
 
 function checkTaskNotifications() {
 
     const now = new Date();
 
+
     tasks.forEach(function (task) {
 
         if (!task.date || !task.start) {
+
             return;
+
         }
+
 
         const taskDateTime =
             new Date(
                 `${task.date}T${task.start}`
             );
 
+
         const timeDifference =
             taskDateTime - now;
+
 
         if (
             timeDifference >= 0 &&
@@ -1353,7 +1439,9 @@ function checkTaskNotifications() {
 
             showNotification(task);
 
+
             task.notified = true;
+
 
             localStorage.setItem(
                 "myTasks",
@@ -1366,34 +1454,6 @@ function checkTaskNotifications() {
 
 }
 
-function checkTaskNotifications() {
-
-    const now = new Date();
-
-    tasks.forEach(function (task) {
-
-        if (!task.date || !task.start) {
-            return;
-        }
-
-        const taskDateTime =
-            new Date(
-                `${task.date}T${task.start}`
-            );
-
-        const timeDifference =
-            taskDateTime - now;
-
-        if (
-            timeDifference >= 0 &&
-            timeDifference <= 60000
-        ) {
-            showNotification(task);
-        }
-
-    });
-
-}
 
 setInterval(
     checkTaskNotifications,
